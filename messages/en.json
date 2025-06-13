@@ -1,0 +1,13 @@
+{
+  "common": {
+    "greeting": "Hello",
+    "Accueil": "Home",
+    "Services": "Services",
+    "À Propos": "About Us",
+    "Contact": "Contact",
+    "Login": "Login",
+    "Language": "Language",
+    "NLivri Lik Logo Alt": "NLivri Lik Logo",
+    "open drawer": "open drawer"
+  }
+}

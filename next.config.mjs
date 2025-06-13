@@ -1,4 +1,12 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+import createNextIntlPlugin from 'next-intl/plugin';
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin('./src/request.js');
+
+// Configuration pour next-intl avec l'App Router.
+// Le fichier './src/request.js' gère la configuration des locales et des messages.
+const nextConfig = {
+  // Toute autre configuration Next.js va ici
+};
+
+export default withNextIntl(nextConfig);
