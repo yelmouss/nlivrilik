@@ -12,6 +12,7 @@ import ServicesSection from "../components/ServicesSection";
 import AboutSection from "../components/AboutSection";
 import TestimonialsSection from "../components/TestimonialsSection";
 import CallToActionSection from "../components/CallToActionSection";
+import SocialLinks from "../components/SocialLinks"; // Import the new component
 
 export default function Home() {
   const t = useTranslations("HomePage");
@@ -20,6 +21,7 @@ export default function Home() {
 
   return (
     <>
+      <SocialLinks /> {/* Add the new component here */}
       {/* Hero Section with Curve */}
       <CurvedSection
         sx={{

@@ -7,7 +7,13 @@
     "Contact": "Contact",
     "Login": "Connexion",
     "Language": "Langue",  
-    "open drawer": "ouvrir le tiroir"
+    "open drawer": "ouvrir le tiroir",
+    "footerCopyright": "NlivriLik © {year}",
+    "footerUsefulLinks": "Liens Utiles",
+    "footerPrivacyPolicy": "Politique de Confidentialité",
+    "footerTermsOfService": "Conditions d'Utilisation",
+    "footerFAQ": "FAQ",
+    "footerOurLocation": "Notre Emplacement"
   },
   "HomePage": {
     "heroTitle": "Votre Solution Rapide et Fiable",

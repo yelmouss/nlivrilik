@@ -7,7 +7,13 @@
     "Contact": "اتصل بنا",
     "Login": "تسجيل الدخول",
     "Language": "اللغة",
-    "open drawer": "فتح القائمة"
+    "open drawer": "فتح القائمة",
+    "footerCopyright": "نليفري ليك © {year}",
+    "footerUsefulLinks": "روابط مفيدة",
+    "footerPrivacyPolicy": "سياسة الخصوصية",
+    "footerTermsOfService": "شروط الخدمة",
+    "footerFAQ": "الأسئلة الشائعة",
+    "footerOurLocation": "موقعنا"
   },
   "HomePage": {
     "heroTitle": "حلكم السريع والموثوق",

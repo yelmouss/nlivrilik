@@ -7,8 +7,13 @@
     "Contact": "Contact",
     "Login": "Login",
     "Language": "Language",
-   
-    "open drawer": "open drawer"
+    "open drawer": "open drawer",
+    "footerCopyright": "NlivriLik © {year}",
+    "footerUsefulLinks": "Useful Links",
+    "footerPrivacyPolicy": "Privacy Policy",
+    "footerTermsOfService": "Terms of Service",
+    "footerFAQ": "FAQ",
+    "footerOurLocation": "Our Location"
   },
   "HomePage": {
     "heroTitle": "Your Fast and Reliable Solution",
