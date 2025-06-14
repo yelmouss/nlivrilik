@@ -137,9 +137,9 @@ export default function TestEmail() {
 
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Typography variant="body1" paragraph>
-            Cet outil vous permet de tester la configuration de l'envoi d'emails
-            pour votre application. Un email de test sera envoyé à l'adresse
-            configurée dans les variables d'environnement.
+            Cet outil vous permet de tester la configuration de l&apos;envoi d&apos;emails
+            pour votre application. Un email de test sera envoyé à l&apos;adresse
+            configurée dans les variables d&apos;environnement.
           </Typography>
 
           <Box

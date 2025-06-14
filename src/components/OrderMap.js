@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -21,6 +21,34 @@ export default function OrderMap({ onLocationSelect, initialCoordinates = [0, 0]
   const [map, setMap] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   
+  // Fonction pour récupérer l'adresse à partir des coordonnées (géocodage inverse)
+  const fetchAddressFromCoordinates = useCallback(async (coordinates) => {
+    try {
+      // Utilisation de l'API Nominatim d'OpenStreetMap pour le géocodage inverse
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lon=${coordinates[0]}&lat=${coordinates[1]}&zoom=18&addressdetails=1`,
+        { headers: { 'Accept-Language': 'fr' } }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération de l\'adresse');
+      }
+      
+      const data = await response.json();
+      
+      if (data && data.display_name) {
+        // Appeler la fonction de rappel avec les coordonnées et l'adresse formatée
+        onLocationSelect({
+          coordinates: coordinates,
+          formattedAddress: data.display_name
+        });
+      }
+    } catch (error) {
+      console.error('Erreur de géocodage inverse:', error);
+      setError(t('addressLookupError'));
+    }
+  }, [onLocationSelect, t]);
+
   // Effet pour charger la carte à l'exécution côté client uniquement
   useEffect(() => {
     // Fonction asynchrone pour initialiser la carte
@@ -160,35 +188,7 @@ export default function OrderMap({ onLocationSelect, initialCoordinates = [0, 0]
         map.setTarget(null);
       }
     };
-  }, [mapRef, mapLoaded, initialCoordinates, t]);
-  
-  // Fonction pour récupérer l'adresse à partir des coordonnées (géocodage inverse)
-  const fetchAddressFromCoordinates = async (coordinates) => {
-    try {
-      // Utilisation de l'API Nominatim d'OpenStreetMap pour le géocodage inverse
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lon=${coordinates[0]}&lat=${coordinates[1]}&zoom=18&addressdetails=1`,
-        { headers: { 'Accept-Language': 'fr' } }
-      );
-      
-      if (!response.ok) {
-        throw new Error('Erreur lors de la récupération de l\'adresse');
-      }
-      
-      const data = await response.json();
-      
-      if (data && data.display_name) {
-        // Appeler la fonction de rappel avec les coordonnées et l'adresse formatée
-        onLocationSelect({
-          coordinates: coordinates,
-          formattedAddress: data.display_name
-        });
-      }
-    } catch (error) {
-      console.error('Erreur de géocodage inverse:', error);
-      setError(t('addressLookupError'));
-    }
-  };
+  }, [mapRef, mapLoaded, initialCoordinates, t, fetchAddressFromCoordinates, map]);
   
   return (
     <Box sx={{ position: 'relative', height: MAP_PLACEHOLDER_HEIGHT, border: `1px solid ${theme.palette.divider}`, borderRadius: theme.shape.borderRadius }}>

@@ -1,39 +1,23 @@
 'use client';
-import * as React from 'react';
+
+import React from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import Link from 'next/link'; // Keep next/link for navigation
+import { useRouter } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
+import { useTranslations, useLocale } from 'next-intl';
+import { AppBar, Toolbar, IconButton, Typography, Button, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Box, Menu, MenuItem, Avatar, FormControl, InputLabel, Select } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import ListItemIcon from '@mui/material/ListItemIcon';
+import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import MailIcon from '@mui/icons-material/Mail';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-import { useTranslations, useLocale } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Cookies from 'js-cookie';
-import { useSession, signOut } from 'next-auth/react';
-import Avatar from '@mui/material/Avatar';
-import Menu from '@mui/material/Menu';
-import Divider from '@mui/material/Divider';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import LogoutIcon from '@mui/icons-material/Logout';
-import SettingsIcon from '@mui/icons-material/Settings';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping'; // Added import
+import { UserRoles } from '@/models/UserRoles'; // Import UserRoles
 
 const navItems = [
   { labelKey: 'Accueil', href: '/', icon: <HomeIcon /> },
@@ -47,6 +31,9 @@ const authenticatedItems = [
   { labelKey: 'MyOrders', href: '/my-orders', icon: <ShoppingBagIcon /> },
 ];
 
+// Item pour l'admin
+const adminItem = { labelKey: 'Admin', href: '/admin', icon: <AdminPanelSettingsIcon /> };
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [userMenuAnchorEl, setUserMenuAnchorEl] = React.useState(null);
@@ -57,6 +44,7 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   
   const isAuthenticated = status === 'authenticated' && session;
+  const isAdmin = isAuthenticated && session.user.role === UserRoles.ADMIN;
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
@@ -107,6 +95,17 @@ export default function Navbar() {
             </ListItemButton>
           </ListItem>
         ))}
+
+        {isAdmin && (
+          <ListItem key={adminItem.labelKey} disablePadding>
+            <ListItemButton component={Link} href={adminItem.href} sx={{ pl: 2 }}>
+              <ListItemIcon sx={{ color: theme.palette.custom.lightYellow, minWidth: 'auto', mr: 1 }}>
+                {adminItem.icon}
+              </ListItemIcon>
+              <ListItemText primary={t(adminItem.labelKey)} sx={{ color: theme.palette.custom.lightYellow }} />
+            </ListItemButton>
+          </ListItem>
+        )}
         
         <ListItem disablePadding sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
           {isAuthenticated ? (
@@ -214,16 +213,17 @@ export default function Navbar() {
                     <ListItemIcon>
                       <ShoppingBagIcon fontSize="small" />
                     </ListItemIcon>
-                    <ListItemText primary={t('MyOrders')} />
+                    {t('MyOrders')}
                   </MenuItem>
-                  <MenuItem onClick={handleUserMenuClose} component={Link} href="/settings">
-                    <ListItemIcon>
-                      <SettingsIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary={t('Settings')} />
-                  </MenuItem>
-                  <Divider />
-                  <MenuItem onClick={handleSignOut}>
+                  {isAdmin && (
+                    <MenuItem onClick={handleUserMenuClose} component={Link} href="/admin">
+                      <ListItemIcon>
+                        <AdminPanelSettingsIcon fontSize="small" />
+                      </ListItemIcon>
+                      {t('Admin')}
+                    </MenuItem>
+                  )}
+                  <MenuItem onClick={() => { handleSignOut(); handleUserMenuClose(); }}>
                     <ListItemIcon>
                       <LogoutIcon fontSize="small" />
                     </ListItemIcon>

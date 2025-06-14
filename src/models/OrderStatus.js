@@ -1,5 +1,3 @@
-'use client';
-
 // Définition des statuts possibles pour une commande
 const OrderStatus = {
   PENDING: 'pending',

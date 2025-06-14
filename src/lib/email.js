@@ -25,6 +25,11 @@ export const ADMIN_EMAILS = process.env.ADMIN_EMAILS ?
   ['admin@nlivrilik.com', 'support@nlivrilik.com'];
   // Ajoutez d'autres emails d'administrateurs si nécessaire
 
+// Liste des emails des livreurs qui recevront les notifications de commande pertinentes
+export const DELIVERY_PERSONNEL_EMAILS = process.env.DELIVERY_EMAILS ?
+  process.env.DELIVERY_EMAILS.split(',').map(email => email.trim()) :
+  []; // Par défaut, une liste vide si non défini
+
 /**
  * Envoie un email avec un template HTML
  * @param {Object} options - Options d'envoi d'email
@@ -36,7 +41,7 @@ export const ADMIN_EMAILS = process.env.ADMIN_EMAILS ?
  */
 export async function sendEmail({ to, subject, html, from = process.env.EMAIL_FROM }) {
   try {
-    console.log(`Preparing to send email to ${to} with subject: ${subject}`);
+    console.log(`Preparing to send email to ${Array.isArray(to) ? to.join(', ') : to} with subject: ${subject}`);
     console.log(`Email server config: ${process.env.EMAIL_SERVER_HOST}:${process.env.EMAIL_SERVER_PORT}`);
     
     // Vérifier les paramètres requis
@@ -54,20 +59,20 @@ export async function sendEmail({ to, subject, html, from = process.env.EMAIL_FR
     // Objet de configuration de l'email
     const mailOptions = {
       from: from || `"NLIVRILIK" <${process.env.EMAIL_SERVER_USER}>`,
-      to,
+      to, // 'to' can be a string or an array of strings
       subject,
       html
     };
     
     console.log('Sending email with options:', {
       from: mailOptions.from,
-      to: mailOptions.to,
+      to: mailOptions.to, // Log the recipient(s)
       subject: mailOptions.subject
     });
     
     const result = await transport.sendMail(mailOptions);
     
-    console.log(`Email sent successfully to ${to}. Message ID: ${result.messageId}`);
+    console.log(`Email sent successfully to ${Array.isArray(to) ? to.join(', ') : to}. Message ID: ${result.messageId}`);
     return { success: true, messageId: result.messageId };
   } catch (error) {
     console.error('Error sending email:', error);
@@ -88,13 +93,53 @@ export async function sendAdminNotification({ subject, html, additionalRecipient
   let recipients = [...ADMIN_EMAILS];
   
   if (typeof additionalRecipients === 'string') {
-    recipients.push(additionalRecipients);
+    if (additionalRecipients) recipients.push(additionalRecipients);
   } else if (Array.isArray(additionalRecipients)) {
-    recipients = [...recipients, ...additionalRecipients];
+    recipients = [...recipients, ...additionalRecipients.filter(r => r)];
+  }
+  
+  // Ensure no duplicates and all are valid emails if further validation is needed
+  const uniqueRecipients = [...new Set(recipients)];
+
+  if (uniqueRecipients.length === 0) {
+    console.log("No admin recipients configured for notification.");
+    return { success: true, message: "No admin recipients." };
   }
   
   return sendEmail({
-    to: recipients,
+    to: uniqueRecipients,
+    subject,
+    html
+  });
+}
+
+// Nouvelle fonction pour envoyer des notifications aux livreurs
+/**
+ * Envoie des emails aux livreurs.
+ * @param {Object} options - Options d'envoi
+ * @param {string} options.subject - Sujet de l'email
+ * @param {string} options.html - Contenu HTML de l'email
+ * @param {string|Array} [options.additionalRecipients] - Destinataires supplémentaires (optionnel)
+ * @returns {Promise<Object>} Résultat de l'envoi
+ */
+export async function sendDeliveryNotification({ subject, html, additionalRecipients = [] }) {
+  let recipients = [...DELIVERY_PERSONNEL_EMAILS];
+
+  if (typeof additionalRecipients === 'string') {
+    if (additionalRecipients) recipients.push(additionalRecipients);
+  } else if (Array.isArray(additionalRecipients)) {
+    recipients = [...recipients, ...additionalRecipients.filter(r => r)];
+  }
+
+  const uniqueRecipients = [...new Set(recipients)];
+
+  if (uniqueRecipients.length === 0) {
+    console.log("No delivery personnel recipients configured for notification.");
+    return { success: true, message: "No delivery personnel recipients." };
+  }
+
+  return sendEmail({
+    to: uniqueRecipients,
     subject,
     html
   });

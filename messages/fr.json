@@ -17,7 +17,8 @@
     "footerPrivacyPolicy": "Politique de Confidentialité",
     "footerTermsOfService": "Conditions d'Utilisation",
     "footerFAQ": "FAQ",
-    "footerOurLocation": "Notre Emplacement"
+    "footerOurLocation": "Notre Emplacement",
+    "Admin": "Admin"
   },
   "Auth": {
     "signIn": "Connexion",
@@ -176,6 +177,8 @@
     "redirectingToOrders": "Redirection vers la page des commandes...",
     "orderDetailsDescription": "Veuillez décrire en détail ce que vous souhaitez faire livrer",
     "orderConfirmationDescription": "Veuillez vérifier votre commande avant de la soumettre",
-    "orderHistory": "Historique des Commandes"
+    "orderHistory": "Historique des Commandes",
+    "suggestions": "Suggestions",
+    "additionalInfo": "Informations supplémentaires"
   }
 }

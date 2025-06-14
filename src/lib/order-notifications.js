@@ -1,4 +1,4 @@
-import { generateEmailTemplate, sendAdminNotification, sendEmail, ADMIN_EMAILS, createEmailTransporter } from './email';
+import { generateEmailTemplate, sendAdminNotification, sendEmail, ADMIN_EMAILS, createEmailTransporter, sendDeliveryNotification, DELIVERY_PERSONNEL_EMAILS } from './email';
 import { generateOrderEmailTemplate } from './email-templates';
 import OrderStatus from '@/models/OrderStatus';
 
@@ -138,78 +138,145 @@ export async function sendOrderStatusChangeNotification(order, previousStatus, n
   const statusTranslation = getStatusTranslation(newStatus);
   
   // Déterminer le titre et le contenu en fonction du nouveau statut
-  let title, content;
-  
+  let title, content, adminTitle, adminContent, deliveryTitle, deliveryContent;
+  let customerButtonText = 'Suivre ma commande';
+  let customerButtonUrl = getOrderTrackingUrl(order._id);
+  let adminButtonText = 'Gérer la commande';
+  let adminButtonUrl = `${process.env.NEXTAUTH_URL || 'https://nlivrilik.vercel.app'}/admin/orders/${order._id}`;
+  let deliveryButtonText = 'Voir les détails de la commande';
+  let deliveryButtonUrl = `${process.env.NEXTAUTH_URL || 'https://nlivrilik.vercel.app'}/delivery/orders/${order._id}`; // Assuming a delivery portal path
+
   switch (newStatus) {
     case OrderStatus.CONFIRMED:
       title = 'Votre commande a été confirmée';
       content = `Bonjour ${order.contactInfo.fullName},<br><br>
-                Bonne nouvelle ! Votre commande a été confirmée et sera traitée sous peu.`;
+                Bonne nouvelle ! Votre commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> a été confirmée et sera traitée sous peu.`;
+      adminTitle = `Commande #${order._id.toString().substring(0,8).toUpperCase()} Confirmée`;
+      adminContent = `La commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> de ${order.contactInfo.fullName} a été confirmée.`;
       break;
     case OrderStatus.PROCESSING:
       title = 'Votre commande est en préparation';
       content = `Bonjour ${order.contactInfo.fullName},<br><br>
-                Nous préparons actuellement votre commande.`;
+                Votre commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> est maintenant en cours de préparation. Nous vous tiendrons informé de la suite.`;
+      adminTitle = `Commande #${order._id.toString().substring(0,8).toUpperCase()} en Préparation`;
+      adminContent = `La commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> de ${order.contactInfo.fullName} est passée au statut "En préparation".`;
       break;
     case OrderStatus.READY:
       title = 'Votre commande est prête';
       content = `Bonjour ${order.contactInfo.fullName},<br><br>
-                Votre commande est prête et va bientôt être confiée à notre livreur.`;
+                Excellente nouvelle ! Votre commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> est prête à être expédiée/récupérée.`;
+      adminTitle = `Commande #${order._id.toString().substring(0,8).toUpperCase()} Prête`;
+      adminContent = `La commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> de ${order.contactInfo.fullName} est prête.`;
+      // Notification pour le livreur si assigné
+      if (order.deliveryDetails && order.deliveryDetails.assignedTo) {
+        deliveryTitle = `Commande #${order._id.toString().substring(0,8).toUpperCase()} Prête pour Livraison`;
+        deliveryContent = `La commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> de ${order.contactInfo.fullName} est prête et vous a été assignée pour livraison.`;
+      }
       break;
     case OrderStatus.IN_TRANSIT:
       title = 'Votre commande est en cours de livraison';
       content = `Bonjour ${order.contactInfo.fullName},<br><br>
-                Votre commande est en route ! Notre livreur est en chemin vers l'adresse que vous avez indiquée.`;
+                Votre commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> est en cours de livraison. Vous pouvez suivre son avancée.`;
+      adminTitle = `Commande #${order._id.toString().substring(0,8).toUpperCase()} en Cours de Livraison`;
+      adminContent = `La commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> de ${order.contactInfo.fullName} est maintenant en cours de livraison.`;
+      // Notification pour le livreur
+      deliveryTitle = `Livraison en Cours: Commande #${order._id.toString().substring(0,8).toUpperCase()}`;
+      deliveryContent = `Vous avez commencé la livraison de la commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong>.`;
       break;
     case OrderStatus.DELIVERED:
       title = 'Votre commande a été livrée';
       content = `Bonjour ${order.contactInfo.fullName},<br><br>
-                Votre commande a été livrée avec succès. Nous espérons que vous êtes satisfait(e) de notre service.`;
+                Nous sommes heureux de vous informer que votre commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> a été livrée avec succès. Merci de votre confiance !`;
+      adminTitle = `Commande #${order._id.toString().substring(0,8).toUpperCase()} Livrée`;
+      adminContent = `La commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> de ${order.contactInfo.fullName} a été marquée comme livrée.`;
+      deliveryTitle = `Commande #${order._id.toString().substring(0,8).toUpperCase()} Livrée`;
+      deliveryContent = `Vous avez marqué la commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> comme livrée.`;
       break;
     case OrderStatus.CANCELLED:
       title = 'Votre commande a été annulée';
       content = `Bonjour ${order.contactInfo.fullName},<br><br>
-                Votre commande a été annulée. Si vous avez des questions concernant cette annulation, n'hésitez pas à nous contacter.`;
+                Votre commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> a été annulée conformément à votre demande ou suite à un problème. 
+                N'hésitez pas à nous contacter pour plus d'informations.`;
+      adminTitle = `Commande #${order._id.toString().substring(0,8).toUpperCase()} Annulée`;
+      adminContent = `La commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> de ${order.contactInfo.fullName} a été annulée.`;
+      if (order.deliveryDetails && order.deliveryDetails.assignedTo) {
+        deliveryTitle = `Commande #${order._id.toString().substring(0,8).toUpperCase()} Annulée`;
+        deliveryContent = `La commande <strong>#${order._id.toString().substring(0,8).toUpperCase()}</strong> qui vous était assignée a été annulée.`;
+      }
       break;
     default:
-      title = 'Mise à jour de votre commande';
-      content = `Bonjour ${order.contactInfo.fullName},<br><br>
-                Le statut de votre commande a été mis à jour.`;
+      console.log(`Aucune notification configurée pour le statut: ${newStatus}`);
+      return { message: "Aucune notification pour ce statut." };
   }
-  
-  // Email au client avec le template élaboré
-  const customerEmailHtml = generateOrderEmailTemplate({
-    title,
-    content,
-    order,
-    buttonText: 'Suivre ma commande',
-    buttonUrl: getOrderTrackingUrl(order._id)
-  });
-  
-  // Email aux administrateurs avec le template élaboré
-  const adminEmailHtml = generateOrderEmailTemplate({
-    title: `Statut de commande mis à jour: ${statusTranslation}`,
-    content: `Le statut de la commande #${order._id} a changé de "${getStatusTranslation(previousStatus)}" à "${statusTranslation}".`,
-    order,
-    buttonText: 'Gérer la commande',
-    buttonUrl: `${process.env.NEXTAUTH_URL || 'https://nlivrilik.vercel.app'}/admin/orders/${order._id}`
-  });
-  
-  // Envoi des emails en parallèle
-  const [customerResult, adminResult] = await Promise.all([
-    sendEmail({
-      to: order.contactInfo.email,
-      subject: `NLIVRILIK - ${title}`,
-      html: customerEmailHtml
-    }),
-    sendAdminNotification({
-      subject: `NLIVRILIK - Commande #${order._id} - ${statusTranslation}`,
-      html: adminEmailHtml
-    })
-  ]);
-  
-  return {
-    customerEmail: customerResult,
-    adminEmail: adminResult
-  };
+
+  try {
+    // Email au client
+    if (order.contactInfo && order.contactInfo.email) {
+      const customerEmailHtml = generateOrderEmailTemplate({
+        title,
+        content,
+        order,
+        buttonText: customerButtonText,
+        buttonUrl: customerButtonUrl
+      });
+      await sendEmail({
+        to: order.contactInfo.email,
+        subject: `NLIVRILIK - Mise à jour de votre commande #${order._id.toString().substring(0,8).toUpperCase()}`,
+        html: customerEmailHtml
+      });
+      console.log(`Notification de changement de statut envoyée au client pour la commande ${order._id}`);
+    } else {
+      console.warn(`Email du client non disponible pour la commande ${order._id}`);
+    }
+
+    // Email aux administrateurs
+    if (ADMIN_EMAILS.length > 0) {
+      const adminEmailHtml = generateOrderEmailTemplate({
+        title: adminTitle,
+        content: adminContent,
+        order,
+        buttonText: adminButtonText,
+        buttonUrl: adminButtonUrl
+      });
+      await sendAdminNotification({
+        subject: `NLIVRILIK - Changement de statut: Commande #${order._id.toString().substring(0,8).toUpperCase()} (${statusTranslation})`,
+        html: adminEmailHtml
+      });
+      console.log(`Notification de changement de statut envoyée aux admins pour la commande ${order._id}`);
+    }
+
+    // Email aux livreurs concernés (si applicable et configuré)
+    if (deliveryTitle && deliveryContent && DELIVERY_PERSONNEL_EMAILS.length > 0) {
+        // Potentiellement, vous voudrez envoyer uniquement au livreur assigné si cette info est dans order.deliveryDetails.assignedTo.email
+        // Pour l'instant, envoi à tous les livreurs configurés dans DELIVERY_PERSONNEL_EMAILS
+        // ou à un livreur spécifique si l'information est disponible et que vous adaptez la logique.
+        let deliveryRecipients = [...DELIVERY_PERSONNEL_EMAILS];
+        // Exemple: si vous avez l'email du livreur assigné:
+        // if (order.deliveryDetails && order.deliveryDetails.assignedTo && order.deliveryDetails.assignedTo.email) {
+        //   deliveryRecipients = [order.deliveryDetails.assignedTo.email]; 
+        // }
+
+        if (deliveryRecipients.length > 0) {
+            const deliveryEmailHtml = generateOrderEmailTemplate({
+                title: deliveryTitle,
+                content: deliveryContent,
+                order,
+                buttonText: deliveryButtonText,
+                buttonUrl: deliveryButtonUrl
+            });
+            await sendDeliveryNotification({
+                to: deliveryRecipients, // S'assurer que sendDeliveryNotification peut prendre un tableau `to` ou ajuste l'appel
+                subject: `NLIVRILIK - Mise à jour livraison: Commande #${order._id.toString().substring(0,8).toUpperCase()} (${statusTranslation})`,
+                html: deliveryEmailHtml
+            });
+            console.log(`Notification de changement de statut envoyée aux livreurs pour la commande ${order._id}`);
+        }
+    }
+
+    return { success: true, message: `Notifications envoyées pour le statut ${newStatus}` };
+
+  } catch (error) {
+    console.error(`Erreur lors de l'envoi des notifications de changement de statut pour la commande ${order._id}:`, error);
+    return { success: false, error: error.message };
+  }
 }

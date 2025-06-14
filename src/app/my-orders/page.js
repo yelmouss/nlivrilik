@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Container, Typography, Box, Paper, Grid, Divider, Chip, Button, Alert, CircularProgress, Snackbar } from '@mui/material';
@@ -25,7 +25,7 @@ export default function MyOrdersPage() {
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   
   // Fonction pour charger les commandes
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch('/api/orders');
@@ -42,7 +42,7 @@ export default function MyOrdersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
   
   useEffect(() => {
     // Rediriger vers la page de connexion si non authentifié
@@ -54,7 +54,7 @@ export default function MyOrdersPage() {
     if (status === 'authenticated') {
       fetchOrders();
     }
-  }, [status, router, t]);
+  }, [status, router, t, fetchOrders]);
   
   // Fonction pour mettre à jour le statut d'une commande
   const handleStatusChange = async (orderId, newStatus) => {
