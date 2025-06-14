@@ -6,11 +6,13 @@ import Link from 'next/link'
 import { Container, TextField, Button, Typography, Box, Alert, Paper, CircularProgress } from '@mui/material'
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react'
+import { useTranslations } from 'next-intl'
 
 export default function SignUp() {
   const router = useRouter()
   const theme = useTheme();
   const { data: session, status } = useSession();
+  const t = useTranslations('Auth');
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -33,7 +35,7 @@ export default function SignUp() {
     setLoading(true)
 
     if (!name || !email || !password) {
-      setError('All fields are necessary.')
+      setError(t('allFieldsRequired'))
       setLoading(false)
       return
     }
@@ -50,7 +52,7 @@ export default function SignUp() {
       const { user } = await resUserExists.json()
 
       if (user) {
-        setError('User already exists.')
+        setError(t('userAlreadyExists'))
         setLoading(false)
         return
       }
@@ -71,18 +73,18 @@ export default function SignUp() {
 
       if (res.ok) {
         const data = await res.json()
-        setSuccess(data.message || 'Inscription réussie ! Veuillez vérifier votre email pour confirmer votre compte.')
+        setSuccess(data.message || t('registrationSuccess'))
         setName('')
         setEmail('')
         setPassword('')
         // router.push('/auth/signin'); // Optionally redirect
       } else {
         const data = await res.json()
-        setError(data.message || 'User registration failed.')
+        setError(data.message || t('registrationFailed'))
       }
     } catch (error) {
       console.error('Error during registration:', error)
-      setError('An error occurred during registration.')
+      setError(t('registrationError'))
       setLoading(false)
     }
   }
@@ -99,7 +101,7 @@ export default function SignUp() {
     <Container component="main" maxWidth="xs" sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Paper elevation={3} sx={{ padding: 4, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: theme.palette.background.paper }}>
         <Typography component="h1" variant="h5" color="primary">
-          Sign Up
+          {t('signUp')}
         </Typography>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
           {error && (
@@ -117,7 +119,7 @@ export default function SignUp() {
             required
             fullWidth
             id="name"
-            label="Full Name"
+            label={t('name')}
             name="name"
             autoComplete="name"
             autoFocus
@@ -139,7 +141,7 @@ export default function SignUp() {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={t('emailAddress')}
             name="email"
             autoComplete="email"
             value={email}
@@ -160,7 +162,7 @@ export default function SignUp() {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={t('password')}
             type="password"
             id="password"
             autoComplete="new-password"
@@ -184,13 +186,13 @@ export default function SignUp() {
             sx={{ mt: 3, mb: 2 }}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
+            {loading ? <CircularProgress size={24} color="inherit" /> : t('signUp')}
           </Button>
           <Typography variant="body2" align="center">
-            Already have an account?{' '}
+            {t('alreadyHaveAccount')}{' '}
             <Link href="/auth/signin" passHref>
               <Typography component="span" color="primary" sx={{ textDecoration: 'underline', cursor: 'pointer' }}>
-                Sign In
+                {t('signIn')}
               </Typography>
             </Link>
           </Typography>

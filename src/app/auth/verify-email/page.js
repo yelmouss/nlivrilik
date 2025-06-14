@@ -2,16 +2,18 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { Container, Typography, Box, Paper, TextField, Button, Alert, CircularProgress } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 import Link from 'next/link'
-import { Container, TextField, Button, Typography, Box, Alert, Paper, CircularProgress } from '@mui/material'
-import { useTheme } from '@mui/material/styles';
-import { useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react'
+import { useTranslations } from 'next-intl'
 
 export default function VerifyEmail() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const theme = useTheme();
   const { data: session, status, update } = useSession();
+  const t = useTranslations('Auth');
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
@@ -30,18 +32,20 @@ export default function VerifyEmail() {
     }
     
     if (error === 'email_not_verified') {
-      setMessage({ type: 'warning', text: 'Vous devez vérifier votre adresse email avant de pouvoir vous connecter.' })
+      setMessage({ type: 'warning', text: t('emailNotVerified') })
     } else if (error === 'invalid_token') {
-      setMessage({ type: 'error', text: 'Le lien de vérification est invalide ou a expiré. Veuillez demander un nouveau lien.' })
+      setMessage({ type: 'error', text: t('invalidToken') })
     } else if (error === 'missing_params') {
-      setMessage({ type: 'error', text: 'Paramètres manquants. Veuillez demander un nouveau lien de vérification.' })
-    } else if (error === 'db_error' || error === 'server_error') {
-      setMessage({ type: 'error', text: 'Une erreur serveur s\'est produite. Veuillez réessayer plus tard.' })
+      setMessage({ type: 'error', text: t('missingParams') })
+    } else if (error === 'db_error') {
+      setMessage({ type: 'error', text: t('dbError') })
+    } else if (error === 'server_error') {
+      setMessage({ type: 'error', text: t('serverError') })
     } else if (success === 'true') {
       if (autoLogin === 'true') {
         setMessage({ 
           type: 'success', 
-          text: 'Votre adresse email a été vérifiée avec succès. Vous êtes maintenant connecté! Redirection en cours...' 
+          text: t('emailVerified') 
         });
         
         // Start countdown for redirect
@@ -49,13 +53,13 @@ export default function VerifyEmail() {
       } else {
         setMessage({ 
           type: 'success', 
-          text: 'Votre adresse email a été vérifiée avec succès. Vous pouvez maintenant vous connecter.' 
+          text: t('emailVerifiedNotLoggedIn') 
         });
       }
     }
-  }, [error, success, emailParam, autoLogin]);
+  }, [error, success, emailParam, autoLogin, t]);
 
-  // Handle redirect countdown
+  // Handle redirect countdown  
   useEffect(() => {
     if (redirectCountdown === null) return;
     
@@ -82,14 +86,14 @@ export default function VerifyEmail() {
   const handleResendEmail = async (e) => {
     e.preventDefault()
     if (!email) {
-      setMessage({ type: 'error', text: 'Veuillez entrer votre adresse email.' })
+      setMessage({ type: 'error', text: t('enterYourEmail') })
       return
     }
 
     setLoading(true)
     setMessage({ type: '', text: '' })
 
-    try {
+    try {      
       const response = await fetch('/api/auth/resend-verification', {
         method: 'POST',
         headers: {
@@ -97,26 +101,26 @@ export default function VerifyEmail() {
         },
         body: JSON.stringify({ email }),
       })
-
+      
       const data = await response.json()
 
       if (response.ok && data.success) {
         if (data.verified) {
-          setMessage({ type: 'info', text: 'Votre adresse email est déjà vérifiée. Vous pouvez vous connecter.' })
+          setMessage({ type: 'info', text: t('emailAlreadyVerified') })
         } else {
           setEmailSent(true)
-          setMessage({ type: 'success', text: 'Un email de vérification a été envoyé. Veuillez vérifier votre boîte de réception.' })
+          setMessage({ type: 'success', text: t('verificationEmailSent') })
         }
       } else {
         setMessage({ 
           type: 'error', 
-          text: data.message || 'Échec de l\'envoi de l\'email de vérification.' 
+          text: data.message || t('emailSendingFailed') 
         })
         console.error('Error details:', data.error)
       }
     } catch (error) {
       console.error('Error sending verification email:', error)
-      setMessage({ type: 'error', text: 'Une erreur s\'est produite. Veuillez réessayer plus tard.' })
+      setMessage({ type: 'error', text: t('serverError') })
     } finally {
       setLoading(false)
     }
@@ -126,7 +130,7 @@ export default function VerifyEmail() {
     <Container component="main" maxWidth="xs" sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Paper elevation={3} sx={{ padding: 4, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: theme.palette.background.paper }}>
         <Typography component="h1" variant="h5" color="primary" gutterBottom>
-          Vérification d'Email
+          {t('emailVerification')}
         </Typography>
 
         {message.type && (
@@ -134,7 +138,10 @@ export default function VerifyEmail() {
             {message.text}
             {redirectCountdown !== null && redirectCountdown > 0 && (
               <Typography variant="body2" sx={{ mt: 1 }}>
-                Redirection dans {redirectCountdown} seconde{redirectCountdown > 1 ? 's' : ''}...
+                {t('redirectingIn', {
+                  seconds: redirectCountdown,
+                  plural: redirectCountdown > 1 ? 's' : ''
+                })}
               </Typography>
             )}
           </Alert>
@@ -143,14 +150,14 @@ export default function VerifyEmail() {
         {!emailSent && !autoLogin && (
           <Box component="form" onSubmit={handleResendEmail} sx={{ mt: 1, width: '100%' }}>
             <Typography variant="body2" gutterBottom>
-              Veuillez entrer votre adresse email pour recevoir un nouveau lien de vérification.
+              {t('enterEmailForVerification')}
             </Typography>
             <TextField
               margin="normal"
               required
               fullWidth
               id="email"
-              label="Adresse Email"
+              label={t('emailAddress')}
               name="email"
               autoComplete="email"
               autoFocus
@@ -174,25 +181,25 @@ export default function VerifyEmail() {
               disabled={loading}
               sx={{ mt: 3, mb: 2 }}
             >
-              {loading ? <CircularProgress size={24} /> : 'Envoyer le lien de vérification'}
+              {loading ? <CircularProgress size={24} /> : t('sendVerificationLink')}
             </Button>
           </Box>
-        )}
+        )}        
 
         {emailSent && !autoLogin && (
           <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Typography variant="body1" gutterBottom>
-              Un email de vérification a été envoyé à <strong>{email}</strong>.
+              {t('verificationLinkSent')} <strong>{email}</strong>.
             </Typography>
             <Typography variant="body2" color="text.secondary" gutterBottom>
-              Si vous ne recevez pas l'email dans quelques minutes, vérifiez votre dossier spam ou cliquez sur le bouton ci-dessous pour réessayer.
+              {t('checkSpamFolder')}
             </Typography>
             <Button
               variant="outlined"
               onClick={() => setEmailSent(false)}
               sx={{ mt: 2 }}
             >
-              Réessayer
+              {t('retry')}
             </Button>
           </Box>
         )}
@@ -200,10 +207,10 @@ export default function VerifyEmail() {
         {!autoLogin && (
           <Box sx={{ mt: 3, width: '100%', textAlign: 'center' }}>
             <Typography variant="body2">
-              Retourner à la {' '}
+              {t('returnToSignIn')} {' '}
               <Link href="/auth/signin" passHref>
                 <Typography component="span" color="primary" sx={{ textDecoration: 'underline', cursor: 'pointer' }}>
-                  page de connexion
+                  {t('signIn')}
                 </Typography>
               </Link>
             </Typography>

@@ -18,6 +18,7 @@ export default function MyOrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
   useEffect(() => {
     // Rediriger vers la page de connexion si non authentifié
     if (status === 'unauthenticated') {

@@ -5,11 +5,13 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Container, Typography, Box, Paper, CircularProgress, Alert } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 export default function VerifyEmail() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const theme = useTheme()
+  const t = useTranslations('Auth')
   const [status, setStatus] = useState('loading') // loading, success, error
   const [message, setMessage] = useState('')
 
@@ -19,7 +21,7 @@ export default function VerifyEmail() {
   useEffect(() => {
     if (!token || !email) {
       setStatus('error')
-      setMessage('Paramètres manquants. Le lien de vérification est invalide.')
+      setMessage(t('missingParams'))
       return
     }
 
@@ -33,23 +35,23 @@ export default function VerifyEmail() {
           router.push(response.url)
         } else {
           setStatus('error')
-          setMessage('Une erreur s\'est produite lors de la vérification de votre email.')
+          setMessage(t('verificationError'))
         }
       } catch (error) {
         console.error('Error verifying email:', error)
         setStatus('error')
-        setMessage('Une erreur s\'est produite lors de la vérification de votre email.')
+        setMessage(t('verificationError'))
       }
     }
 
     verifyEmail()
-  }, [token, email, router])
+  }, [token, email, router, t])
 
   return (
     <Container component="main" maxWidth="xs" sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Paper elevation={3} sx={{ padding: 4, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: theme.palette.background.paper }}>
         <Typography component="h1" variant="h5" color="primary" gutterBottom>
-          Vérification d'Email
+          {t('emailVerification')}
         </Typography>
 
         <Box sx={{ mt: 3, mb: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -57,7 +59,7 @@ export default function VerifyEmail() {
             <>
               <CircularProgress size={40} sx={{ mb: 2 }} />
               <Typography variant="body1">
-                Vérification de votre adresse email en cours...
+                {t('verifyingEmail')}
               </Typography>
             </>
           )}
@@ -68,13 +70,13 @@ export default function VerifyEmail() {
                 {message}
               </Alert>
               <Typography variant="body2">
-                Veuillez retourner à la page de {' '}
+                {t('returnToSignIn')} {' '}
                 <Link href="/auth/verify-email" passHref>
                   <Typography component="span" color="primary" sx={{ textDecoration: 'underline', cursor: 'pointer' }}>
-                    vérification d'email
+                    {t('emailVerification')}
                   </Typography>
                 </Link>
-                {' '} pour demander un nouveau lien.
+                {' '} {t('sendVerificationLink')}.
               </Typography>
             </>
           )}
@@ -82,10 +84,10 @@ export default function VerifyEmail() {
 
         <Box sx={{ mt: 3, width: '100%', textAlign: 'center' }}>
           <Typography variant="body2">
-            Retourner à la {' '}
+            {t('returnToSignIn')} {' '}
             <Link href="/auth/signin" passHref>
               <Typography component="span" color="primary" sx={{ textDecoration: 'underline', cursor: 'pointer' }}>
-                page de connexion
+                {t('signIn')}
               </Typography>
             </Link>
           </Typography>

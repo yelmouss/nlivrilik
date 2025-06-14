@@ -6,10 +6,12 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Container, TextField, Button, Typography, Box, Alert, Paper, CircularProgress } from '@mui/material'
 import { useTheme } from '@mui/material/styles';
+import { useTranslations } from 'next-intl'
 
 export default function SignIn() {
   const router = useRouter()
   const theme = useTheme();
+  const t = useTranslations('Auth');
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -23,7 +25,6 @@ export default function SignIn() {
     }
     setLoading(false)
   }, [status, router])
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
@@ -37,7 +38,7 @@ export default function SignIn() {
       if (result.error === 'email_not_verified') {
         router.push(`/auth/verify-email?error=email_not_verified&email=${encodeURIComponent(email)}`)
       } else {
-        setError(result.error === 'CredentialsSignin' ? 'Invalid email or password' : result.error)
+        setError(result.error === 'CredentialsSignin' ? t('invalidCredentials') : result.error)
         console.error(result.error)
       }    } else {
       router.push('/my-orders')
@@ -51,12 +52,11 @@ export default function SignIn() {
       </Container>
     );
   }
-
   return (
     <Container component="main" maxWidth="xs" sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Paper elevation={3} sx={{ padding: 4, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: theme.palette.background.paper }}>
         <Typography component="h1" variant="h5" color="primary">
-          Sign In
+          {t('signIn')}
         </Typography>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
           {error && (
@@ -69,7 +69,7 @@ export default function SignIn() {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={t('emailAddress')}
             name="email"
             autoComplete="email"
             autoFocus
@@ -80,7 +80,7 @@ export default function SignIn() {
                 color: theme.palette.text.primary,
               },
               '& .MuiOutlinedInput-root': {
-                '&.Mui-focused .MuiOutlinedInput-notchedOutline': { // Corrected selector
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                   borderColor: theme.palette.primary.main,
                 },
               },
@@ -91,7 +91,7 @@ export default function SignIn() {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={t('password')}
             type="password"
             id="password"
             autoComplete="current-password"
@@ -102,7 +102,7 @@ export default function SignIn() {
                 color: theme.palette.text.primary,
               },
               '& .MuiOutlinedInput-root': {
-                '&.Mui-focused .MuiOutlinedInput-notchedOutline': { // Corrected selector
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                   borderColor: theme.palette.primary.main,
                 },
               },
@@ -114,7 +114,7 @@ export default function SignIn() {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            {t('signIn')}
           </Button>
           <Button
             fullWidth
@@ -122,13 +122,13 @@ export default function SignIn() {
             onClick={() => signIn('google')} 
             sx={{ mb: 2 }}
           >
-            Sign in with Google
+            {t('signInWithGoogle')}
           </Button>
           <Typography variant="body2" align="center">
-            Don't have an account?{' '}
+            {t('dontHaveAccount')}{' '}
             <Link href="/auth/signup" passHref>
               <Typography component="span" color="primary" sx={{ textDecoration: 'underline', cursor: 'pointer' }}>
-                Sign Up
+                {t('signUp')}
               </Typography>
             </Link>
           </Typography>
