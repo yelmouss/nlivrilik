@@ -53,10 +53,11 @@ export async function POST(req) {
         image: '',
         createdAt: new Date(),
         updatedAt: new Date(),
-      });
-
-      const savedUser = await user.save();
-      console.log(`User registered successfully with ID: ${savedUser._id}`);      // Send verification email      try {
+      });      const savedUser = await user.save();
+      console.log(`User registered successfully with ID: ${savedUser._id}`);
+      
+      // Send verification email
+      try {
         // Generate verification URL
         const baseUrl = process.env.NEXTAUTH_URL || `https://${req.headers.get('host')}`;
         const verificationUrl = `${baseUrl}/auth/verify?token=${token}&email=${encodeURIComponent(email)}`;

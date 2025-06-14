@@ -18,17 +18,14 @@ const mongoDBAdapter = () => {
 export const authOptions = {
   // Use the wrapped adapter with error handling
   adapter: mongoDBAdapter(),
-  providers: [
-    EmailProvider({      server: {
+  providers: [    EmailProvider({      server: {
         host: process.env.EMAIL_SERVER_HOST,
         port: process.env.EMAIL_SERVER_PORT,
         auth: {
           user: process.env.EMAIL_SERVER_USER,
           pass: process.env.EMAIL_SERVER_PASSWORD
         },
-        tls: {
-          rejectUnauthorized: false // Ignorer les problèmes de certificat auto-signé
-        }
+        secure: true // Utiliser une connexion sécurisée
       },
       from: process.env.EMAIL_FROM,
       async sendVerificationRequest({ identifier: email, url, provider: { server, from } }) {
