@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 
 const TestimonialCard = ({ text, author }) => (
   <Paper elevation={2} sx={{ padding: 2, fontStyle: "italic", height: "100%" }}>
-    <Typography variant="body1">"{text}"</Typography>
+    <Typography variant="body1">&quot;{text}&quot;</Typography>
     <Typography
       variant="caption"
       display="block"
