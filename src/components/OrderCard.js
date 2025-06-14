@@ -30,6 +30,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import IconButton from '@mui/material/IconButton';
 import OrderStatus from '@/models/OrderStatus';
+import LottieCarousel from './LottieCarousel';
 
 // Fonction pour formater la date
 const formatDate = (dateString) => {
@@ -170,10 +171,15 @@ export default function OrderCard({ order, onStatusChange }) {
   
   return (
     <>
-      <Card variant="outlined" sx={{ mb: 2, borderColor: theme.palette.divider }}>
-        <CardContent>
+
+     {/* Animation carousel displayed at the bottom of the card */}
+        <Divider />
+        <Box sx={{ p: 2 }}>
+          <LottieCarousel />
+        </Box>
+      <Card variant="outlined" sx={{ mb: 2, borderColor: theme.palette.divider }}>        <CardContent>
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={8}>
+            <Grid size={{xs: 8}}>
               <Typography variant="subtitle1" component="div">
                 {t('orderNumber')}: {order._id.substring(0, 8).toUpperCase()}
               </Typography>
@@ -181,7 +187,7 @@ export default function OrderCard({ order, onStatusChange }) {
                 {formatDate(order.createdAt)}
               </Typography>
             </Grid>
-            <Grid item xs={4} sx={{ textAlign: 'right' }}>
+            <Grid size={{xs: 4}} sx={{ textAlign: 'right' }}>
               {renderStatusChip(order.status)}
             </Grid>
           </Grid>
@@ -219,7 +225,7 @@ export default function OrderCard({ order, onStatusChange }) {
               {t('contactInformation')}
             </Typography>
             <Grid container spacing={1}>
-              <Grid item xs={12}>
+              <Grid size={{xs: 12}}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <PersonIcon sx={{ mr: 1, color: 'text.secondary' }} fontSize="small" />
                   <Typography variant="body2">
@@ -227,7 +233,7 @@ export default function OrderCard({ order, onStatusChange }) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{xs: 12}}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <EmailIcon sx={{ mr: 1, color: 'text.secondary' }} fontSize="small" />
                   <Typography variant="body2">
@@ -235,7 +241,7 @@ export default function OrderCard({ order, onStatusChange }) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{xs: 12}}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <PhoneIcon sx={{ mr: 1, color: 'text.secondary' }} fontSize="small" />
                   <Typography variant="body2">
@@ -287,56 +293,56 @@ export default function OrderCard({ order, onStatusChange }) {
                   {t('financialDetails')}
                 </Typography>
                 <Grid container spacing={1}>
-                  <Grid item xs={6}>
+                  <Grid size={{xs: 6}}>
                     <Typography variant="body2" color="text.secondary">
                       {t('subtotal')}:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={{xs: 6}}>
                     <Typography variant="body2" align="right">
                       {order.financialDetails.subtotal.toFixed(2)} €
                     </Typography>
                   </Grid>
                   
-                  <Grid item xs={6}>
+                  <Grid size={{xs: 6}}>
                     <Typography variant="body2" color="text.secondary">
                       {t('deliveryFee')}:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={{xs: 6}}>
                     <Typography variant="body2" align="right">
                       {order.financialDetails.deliveryFee.toFixed(2)} €
                     </Typography>
                   </Grid>
                   
-                  <Grid item xs={6}>
+                  <Grid size={{xs: 6}}>
                     <Typography variant="body2" fontWeight="bold">
                       {t('total')}:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={{xs: 6}}>
                     <Typography variant="body2" fontWeight="bold" align="right">
                       {order.financialDetails.total.toFixed(2)} €
                     </Typography>
                   </Grid>
                   
-                  <Grid item xs={6}>
+                  <Grid size={{xs: 6}}>
                     <Typography variant="body2" color="text.secondary">
                       {t('paymentMethod')}:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={{xs: 6}}>
                     <Typography variant="body2" align="right">
                       {t(`paymentMethod_${order.financialDetails.paymentMethod}`)}
                     </Typography>
                   </Grid>
                   
-                  <Grid item xs={6}>
+                  <Grid size={{xs: 6}}>
                     <Typography variant="body2" color="text.secondary">
                       {t('paymentStatus')}:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={{xs: 6}}>
                     <Typography variant="body2" align="right">
                       {order.financialDetails.isPaid ? (
                         <span style={{ color: theme.palette.success.main }}>{t('paid')}</span>
@@ -347,9 +353,10 @@ export default function OrderCard({ order, onStatusChange }) {
                   </Grid>
                 </Grid>
               </>
-            )}
-          </CardContent>
+            )}          </CardContent>
         </Collapse>
+        
+       
       </Card>
       
       {/* Dialogue de confirmation pour l'annulation de commande */}
