@@ -17,7 +17,8 @@
     "footerPrivacyPolicy": "سياسة الخصوصية",
     "footerTermsOfService": "شروط الخدمة",
     "footerFAQ": "الأسئلة الشائعة",
-    "footerOurLocation": "موقعنا"
+    "footerOurLocation": "موقعنا",
+    "Admin": "Admin"
   },
   "Auth": {
     "signIn": "تسجيل الدخول",
@@ -100,7 +101,8 @@
     "noOrdersYet": "لا توجد طلبات حتى الآن",
     "placeYourFirstOrder": "قم بإنشاء طلبك الأول",
     "placeOrder": "تقديم طلب"
-  },  "Order": {
+  },
+  "Order": {
     "orderDetails": "التفاصيل",
     "showDetails": "عرض التفاصيل",
     "createOrder": "إنشاء طلب",
@@ -115,6 +117,7 @@
     "searchAddress": "البحث عن عنوان",
     "additionalAddressInfo": "معلومات إضافية (رقم الشقة، المبنى، إلخ)",
     "additionalAddressInfoPlaceholder": "شقة، جناح، طابق، مبنى، إلخ",
+    "additionalInfo": "معلومات إضافية",
     "selectLocationOnMap": "اختيار الموقع على الخريطة",
     "mapInstructions": "اسحب الدبوس أو انقر على الخريطة لتحديد موقع التوصيل الخاص بك",
     "orderContent": "محتوى الطلب",
@@ -150,7 +153,8 @@
     "orderBeingProcessed": "يتم معالجة طلبك",
     "orderCompleted": "تم توصيل طلبك",
     "orderCancelled": "تم إلغاء طلبك",
-    "orderNumber": "رقم الطلب",    "confirmCancelTitle": "إلغاء الطلب",
+    "orderNumber": "رقم الطلب",
+    "confirmCancelTitle": "إلغاء الطلب",
     "confirmCancelMessage": "هل أنت متأكد أنك تريد إلغاء هذا الطلب؟",
     "confirmCancel": "تأكيد الإلغاء",
     "confirmCancellation": "تأكيد الإلغاء",

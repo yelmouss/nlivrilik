@@ -17,7 +17,8 @@
     "footerPrivacyPolicy": "Privacy Policy",
     "footerTermsOfService": "Terms of Service",
     "footerFAQ": "FAQ",
-    "footerOurLocation": "Our Location"
+    "footerOurLocation": "Our Location",
+      "Admin": "Admin"
   },
   "Auth": {
     "signIn": "Sign In",
@@ -115,6 +116,7 @@
     "searchAddress": "Search for an address",
     "additionalAddressInfo": "Additional Information (apt number, building, etc.)",
     "additionalAddressInfoPlaceholder": "Apartment, suite, floor, building, etc.",
+    "additionalInfo": "Additional Information",
     "selectLocationOnMap": "Select Location on Map",
     "mapInstructions": "Drag the pin or click on the map to set your delivery location",
     "orderContent": "Order Content",

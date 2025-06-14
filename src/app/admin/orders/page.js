@@ -110,9 +110,11 @@ export default function AdminOrders() {
   // States for editing an order
   const [editFormData, setEditFormData] = useState({
     status: "",
-    deliveryMan: "",
+    deliveryMan: "", // This will store the ID of the delivery man
     note: "",
   });
+  const [deliveryMenList, setDeliveryMenList] = useState([]); // State for delivery men
+
   // Check if user is admin
   useEffect(() => {
     if (status === "authenticated") {
@@ -156,12 +158,46 @@ export default function AdminOrders() {
     }
   }, []);
 
-  // Load orders when page loads
+  // Function to fetch delivery men
+  const fetchDeliveryMen = useCallback(async () => {
+    try {
+      const response = await fetch("/api/admin/users?role=DELIVERY_MAN", { // Assuming an endpoint to get users by role
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Error fetching delivery men");
+      }
+      const data = await response.json();
+      if (data.success) {
+        setDeliveryMenList(data.users);
+      } else {
+        console.error(data.message || "Error fetching delivery men");
+        setSnackbar({
+          open: true,
+          message: data.message || "Could not load delivery men.",
+          severity: "error",
+        });
+      }
+    } catch (err) {
+      console.error(err.message || "An error occurred while fetching delivery men");
+      setSnackbar({
+        open: true,
+        message: err.message || "An error occurred while fetching delivery men.",
+        severity: "error",
+      });
+    }
+  }, []);
+
+  // Load orders and delivery men when page loads
   useEffect(() => {
     if (status === "authenticated" && session.user.role === "ADMIN") {
       fetchOrders();
+      fetchDeliveryMen(); // Fetch delivery men
     }
-  }, [status, session, fetchOrders]);
+  }, [status, session, fetchOrders, fetchDeliveryMen]);
 
   // Filter orders based on status and search term
   const filteredOrders = orders.filter((order) => {
@@ -214,7 +250,8 @@ export default function AdminOrders() {
     setSelectedOrder(order);
     setEditFormData({
       status: order.status,
-      deliveryMan: order.deliveryDetails?.assignedTo || "",
+      // Ensure deliveryMan is an ID or empty string
+      deliveryMan: order.deliveryDetails?.assignedTo?._id || order.deliveryDetails?.assignedTo || "",
       note: "",
     });
     setEditDialogOpen(true);
@@ -599,9 +636,7 @@ export default function AdminOrders() {
                   <Grid size xs={8}>
                     <Typography variant="body2">
                       {selectedOrder.financialDetails?.paymentMethod
-                        ? t(
-                            `paymentMethod_${selectedOrder.financialDetails.paymentMethod}`
-                          )
+                        ? `paymentMethod_${selectedOrder.financialDetails.paymentMethod}`
                         : "Not specified"}
                     </Typography>
                   </Grid>
@@ -815,17 +850,29 @@ export default function AdminOrders() {
 
             <Grid size xs={12}>
               <TextField
+                select
                 fullWidth
-                label="Delivery Man"
+                label="Assign Delivery Man"
                 value={editFormData.deliveryMan}
                 onChange={(e) =>
-                  setEditFormData({
-                    ...editFormData,
-                    deliveryMan: e.target.value,
-                  })
+                  setEditFormData({ ...editFormData, deliveryMan: e.target.value })
                 }
-                helperText="Optional: Name of the delivery person"
-              />
+                helperText="Select a delivery person or leave blank to unassign."
+                sx={{ mb: 2 }}
+              >
+                <MenuItem value="">
+                  <em>None (Unassign)</em>
+                </MenuItem>
+                {deliveryMenList.length > 0 ? (
+                  deliveryMenList.map((deliveryMan) => (
+                    <MenuItem key={deliveryMan._id} value={deliveryMan._id}>
+                      {deliveryMan.name} ({deliveryMan.email})
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>Loading delivery men...</MenuItem>
+                )}
+              </TextField>
             </Grid>
 
             <Grid size xs={12}>
