@@ -1,11 +1,11 @@
-import NextAuth from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import GoogleProvider from 'next-auth/providers/google'
-import EmailProvider from 'next-auth/providers/email'
-import { MongoDBAdapter } from "@auth/mongodb-adapter"
-import clientPromise from '@/lib/mongodb'
-import nodemailer from 'nodemailer'
-import bcrypt from 'bcryptjs'
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import EmailProvider from "next-auth/providers/email";
+import { MongoDBAdapter } from "@auth/mongodb-adapter";
+import clientPromise from "@/lib/mongodb";
+import nodemailer from "nodemailer";
+import bcrypt from "bcryptjs";
 
 // Custom adapter to handle connection errors
 const mongoDBAdapter = () => {
@@ -18,33 +18,42 @@ const mongoDBAdapter = () => {
 export const authOptions = {
   // Use the wrapped adapter with error handling
   adapter: mongoDBAdapter(),
-  providers: [    EmailProvider({      server: {
+  providers: [
+    EmailProvider({      server: {
         host: process.env.EMAIL_SERVER_HOST,
         port: process.env.EMAIL_SERVER_PORT,
         auth: {
           user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD
+          pass: process.env.EMAIL_SERVER_PASSWORD,
         },
-        secure: true // Utiliser une connexion sécurisée
+        secure: false, // Désactiver SSL pour éviter les erreurs de TLS
+        tls: {
+          // Ignorer les erreurs de certificat
+          rejectUnauthorized: false
+        }
       },
       from: process.env.EMAIL_FROM,
-      async sendVerificationRequest({ identifier: email, url, provider: { server, from } }) {
-        const { host } = new URL(url)
-        const transport = nodemailer.createTransport(server)
+      async sendVerificationRequest({
+        identifier: email,
+        url,
+        provider: { server, from },
+      }) {
+        const { host } = new URL(url);
+        const transport = nodemailer.createTransport(server);
         await transport.sendMail({
           to: email,
           from,
           subject: `Sign in to ${host}`,
           text: text({ url, host }),
-          html: html({ url, host, email })
-        })
-      }
+          html: html({ url, host, email }),
+        });
+      },
     }),
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials || !credentials.email || !credentials.password) {
@@ -52,17 +61,22 @@ export const authOptions = {
         }
         const client = await clientPromise;
         const db = client.db();
-        const user = await db.collection("users").findOne({ email: credentials.email });
+        const user = await db
+          .collection("users")
+          .findOne({ email: credentials.email });
 
         if (!user) {
           throw new Error("No user found with this email");
         }
 
         // Validate password
-        const isValid = await bcrypt.compare(credentials.password, user.password);
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
         if (!isValid) {
           throw new Error("Incorrect password");
-        }        // Check if email is verified
+        } // Check if email is verified
         if (!user.emailVerified) {
           console.log("Email not verified for user:", user.email);
           throw new Error("email_not_verified");
@@ -73,9 +87,9 @@ export const authOptions = {
           name: user.name,
           email: user.email,
           image: user.image,
-          role: user.role || 'USER', // Add role, default to 'USER'
+          role: user.role || "USER", // Add role, default to 'USER'
         };
-      }
+      },
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -84,30 +98,32 @@ export const authOptions = {
         params: {
           prompt: "consent",
           access_type: "offline",
-          response_type: "code"
-        }
+          response_type: "code",
+        },
       },
-      profile(profile) { // Add profile function to assign role for Google users
+      profile(profile) {
+        // Add profile function to assign role for Google users
         return {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
           image: profile.picture,
-          role: profile.role || 'USER', // Default role for Google users
+          role: profile.role || "USER", // Default role for Google users
         };
       },
-    })
+    }),
   ],
   pages: {
-    signIn: '/auth/signin',
+    signIn: "/auth/signin",
     // signOut: '/auth/signout', // Optional: specify custom sign out page
-    error: '/auth/verify-email', // Custom error page for email verification
+    error: "/auth/verify-email", // Custom error page for email verification
     // verifyRequest: '/auth/verify-request', // Optional: (used for check email message)
     // newUser: '/auth/new-user' // Optional: New users will be directed here on first sign in (leave the property out to disable)
   },
   session: {
     strategy: "jwt",
-  },  callbacks: {
+  },
+  callbacks: {
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id;
@@ -126,7 +142,7 @@ export const authOptions = {
       if (account?.provider === "google" && isNewUser) {
         // The profile function in GoogleProvider should have already set the role.
         // If not, we can default it here, but it's better handled in profile.
-        token.role = token.role || 'USER'; 
+        token.role = token.role || "USER";
       }
       return token;
     },
@@ -146,27 +162,27 @@ export const authOptions = {
         return url;
       }
       return "/auth/signin";
-    }
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === 'development',
-}
+  debug: process.env.NODE_ENV === "development",
+};
 
 // Helper functions for email templates (can be moved to a separate file)
 function html({ url, host, email }) {
-  const escapedEmail = `${email.replace(/./g, '&#&;')}`;
+  const escapedEmail = `${email.replace(/./g, "&#&;")}`;
   return `
     <body>
       <p>Sign in to ${host} as ${escapedEmail} by clicking the link below:</p>
       <p><a href="${url}">Sign in</a></p>
     </body>
-  `
+  `;
 }
 
 function text({ url, host }) {
-  return `Sign in to ${host}\n${url}\n\n`
+  return `Sign in to ${host}\n${url}\n\n`;
 }
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };

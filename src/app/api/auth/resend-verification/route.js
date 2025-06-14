@@ -51,14 +51,17 @@ export async function POST(req) {
       const verificationUrl = `${baseUrl}/auth/verify?token=${token}&email=${encodeURIComponent(email)}`;
         
       // Send email
-      try {        const transport = nodemailer.createTransport({
-          host: process.env.EMAIL_SERVER_HOST,
+      try {        const transport = nodemailer.createTransport({          host: process.env.EMAIL_SERVER_HOST,
           port: process.env.EMAIL_SERVER_PORT,
           auth: {
             user: process.env.EMAIL_SERVER_USER,
             pass: process.env.EMAIL_SERVER_PASSWORD
           },
-          secure: true // Utiliser une connexion sécurisée
+          secure: false, // Désactiver SSL pour éviter les erreurs de TLS
+          tls: {
+            // Ignorer les erreurs de certificat
+            rejectUnauthorized: false
+          }
         });
         
         await transport.sendMail({
