@@ -72,6 +72,23 @@ export default function Navbar() {
             {t('Login')}
           </Button>
         </ListItem>
+        <ListItem sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+          <FormControl sx={{ m: 1, minWidth: '80%' }} size="small">
+            <InputLabel id="language-select-label-mobile" sx={{ color: theme.palette.custom.lightYellow }}>{t('Language')}</InputLabel>
+            <Select
+              labelId="language-select-label-mobile"
+              id="language-select-mobile"
+              value={locale}
+              label={t('Language')}
+              onChange={changeLanguage}
+              sx={{ color: theme.palette.custom.lightYellow, '& .MuiOutlinedInput-notchedOutline': { borderColor: theme.palette.custom.lightYellow }, '& .MuiSvgIcon-root': { color: theme.palette.custom.lightYellow } }}
+            >
+              <MenuItem value="en">English</MenuItem>
+              <MenuItem value="fr">Français</MenuItem>
+              <MenuItem value="ar">العربية</MenuItem>
+            </Select>
+          </FormControl>
+        </ListItem>
       </List>
     </Box>
   );
