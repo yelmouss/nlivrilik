@@ -7,18 +7,22 @@ import theme from '../theme/theme';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Box from '@mui/material/Box';
+import { usePathname } from 'next/navigation';
 
 export function Providers({ children }) {
+  const pathname = usePathname();
+  const isAdminPage = pathname.startsWith('/admin');
+
   return (
     <SessionProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-          <Navbar />
+          {!isAdminPage && <Navbar />}
           <Box component="main" sx={{ flexGrow: 1, }}>
             {children}
           </Box>
-          <Footer />
+          {!isAdminPage && <Footer />}
         </Box>
       </ThemeProvider>
     </SessionProvider>

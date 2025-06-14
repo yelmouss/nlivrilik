@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 import OrderStatus from './OrderStatus';
 
+// Re-export OrderStatus for clients
+export { OrderStatus };
+
 // Vérifier si nous sommes côté client
 const isClient = typeof window !== 'undefined';
 const dummy = { dummy: true }; // Objet factice pour l'exportation côté client

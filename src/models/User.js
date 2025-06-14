@@ -1,11 +1,8 @@
 import mongoose from 'mongoose';
+import UserRoles from './UserRoles';
 
-// Define user roles as constants to avoid typos
-export const UserRoles = {
-  ADMIN: 'ADMIN',
-  USER: 'USER',
-  DELIVERY_MAN: 'DELIVERY_MAN'
-};
+// Define user roles for re-export
+export { UserRoles };
 
 /**
  * Base user schema with common fields for all user types
@@ -200,6 +197,59 @@ const UserSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Middleware pour gérer les changements de rôle
+UserSchema.pre('findOneAndUpdate', async function(next) {
+  const update = this.getUpdate();
+  let finalUpdate = {};
+
+  // Convertir l'update en format $set si ce n'est pas déjà le cas
+  if (!update.$set) {
+    finalUpdate.$set = {};
+    for (const key in update) {
+      if (!key.startsWith('$')) {
+        finalUpdate.$set[key] = update[key];
+      }
+    }
+  } else {
+    finalUpdate = update;
+  }
+
+  // Si le rôle est modifié
+  if (finalUpdate.$set && finalUpdate.$set.role) {
+    const user = await this.model.findOne(this.getQuery()).lean();
+    
+    // Si l'utilisateur existe et que le rôle a changé
+    if (user && user.role !== finalUpdate.$set.role) {
+      // Initialiser $unset si nécessaire
+      if (!finalUpdate.$unset) {
+        finalUpdate.$unset = {};
+      }
+      
+      // Initialiser les détails spécifiques au nouveau rôle
+      switch (finalUpdate.$set.role) {
+        case UserRoles.ADMIN:
+          finalUpdate.$set.adminDetails = {};
+          finalUpdate.$unset.userDetails = 1;
+          finalUpdate.$unset.deliveryDetails = 1;
+          break;
+        case UserRoles.USER:
+          finalUpdate.$set.userDetails = {};
+          finalUpdate.$unset.adminDetails = 1;
+          finalUpdate.$unset.deliveryDetails = 1;
+          break;
+        case UserRoles.DELIVERY_MAN:
+          finalUpdate.$set.deliveryDetails = {};
+          finalUpdate.$unset.adminDetails = 1;
+          finalUpdate.$unset.userDetails = 1;
+          break;
+      }
+    }
+  }
+  
+  this.setUpdate(finalUpdate);
+  next();
+});
+
 // Index for geospatial queries for delivery personnel
 UserSchema.index({ "deliveryDetails.currentLocation": "2dsphere" });
 
@@ -273,4 +323,6 @@ UserSchema.methods = {
 };
 
 // Only create the model if it doesn't already exist (for server-side usage)
-export default mongoose.models.User || mongoose.model('User', UserSchema);
+const User = mongoose.models.User || mongoose.model('User', UserSchema);
+
+export default User;

@@ -52,8 +52,8 @@ export default function OrderMap({ onLocationSelect, initialCoordinates = [0, 0]
           style: new Style({
             image: new Icon({
               anchor: [0.5, 1],
-              src: '/marker-icon.png', // Assurez-vous d'avoir cette image dans votre dossier public
-              scale: 0.5
+              src: '/marker-icon.svg', // Assurez-vous d'avoir cette image dans votre dossier public
+              scale: 0.2
             })
           })
         });

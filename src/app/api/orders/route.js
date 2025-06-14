@@ -7,6 +7,7 @@ import User from '@/models/User';
 import Order from '@/models/Order';
 import OrderStatus from '@/models/OrderStatus';
 import { NextResponse } from 'next/server';
+import { sendNewOrderNotification, sendOrderStatusChangeNotification } from '@/lib/order-notifications';
 
 // Fonction pour récupérer les commandes d'un utilisateur
 export async function getUserOrders() {
@@ -126,6 +127,15 @@ export async function POST(request) {
       );
     }
     
+    // Envoyer les notifications par email
+    try {
+      await sendNewOrderNotification(newOrder);
+      console.log('Notifications de nouvelle commande envoyées avec succès');
+    } catch (emailError) {
+      console.error('Erreur lors de l\'envoi des notifications de commande:', emailError);
+      // Ne pas bloquer la création de la commande si l'envoi d'email échoue
+    }
+    
     return NextResponse.json({
       success: true,
       message: 'Commande créée avec succès',
@@ -200,6 +210,9 @@ export async function PATCH(request) {
       }, { status: 403 });
     }
     
+    // Sauvegarder l'ancien statut avant de le mettre à jour
+    const previousStatus = order.status;
+    
     // Mettre à jour le statut
     order.status = data.status;
     
@@ -227,6 +240,17 @@ export async function PATCH(request) {
     }
     
     await order.save();
+    
+    // Envoyer des notifications pour le changement de statut
+    try {
+      if (previousStatus !== data.status) {
+        await sendOrderStatusChangeNotification(order, previousStatus, data.status);
+        console.log(`Notifications de changement de statut de commande envoyées: ${previousStatus} -> ${data.status}`);
+      }
+    } catch (emailError) {
+      console.error('Erreur lors de l\'envoi des notifications de changement de statut:', emailError);
+      // Ne pas bloquer la mise à jour du statut si l'envoi d'email échoue
+    }
     
     return NextResponse.json({
       success: true,
