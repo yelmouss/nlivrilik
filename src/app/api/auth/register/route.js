@@ -56,8 +56,7 @@ export async function POST(req) {
       });
 
       const savedUser = await user.save();
-      console.log(`User registered successfully with ID: ${savedUser._id}`);      // Send verification email
-      try {
+      console.log(`User registered successfully with ID: ${savedUser._id}`);      // Send verification email      try {
         // Generate verification URL
         const baseUrl = process.env.NEXTAUTH_URL || `https://${req.headers.get('host')}`;
         const verificationUrl = `${baseUrl}/auth/verify?token=${token}&email=${encodeURIComponent(email)}`;
@@ -70,10 +69,7 @@ export async function POST(req) {
             user: process.env.EMAIL_SERVER_USER,
             pass: process.env.EMAIL_SERVER_PASSWORD
           },
-          tls: {
-            rejectUnauthorized: false // Ignorer les problèmes de certificat auto-signé
-          },
-          secure: false // Try setting secure to false
+          secure: true // Utiliser une connexion sécurisée
         });
         
         await transport.sendMail({
