@@ -127,7 +127,18 @@ export default function VerifyEmail() {
   }
 
   return (
-    <Container component="main" maxWidth="xs" sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Container 
+      component="main" 
+      maxWidth="xs" 
+      sx={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        py: 4
+      }}
+    >
       <Paper elevation={3} sx={{ padding: 4, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: theme.palette.background.paper }}>
         <Typography component="h1" variant="h5" color="primary" gutterBottom>
           {t('emailVerification')}

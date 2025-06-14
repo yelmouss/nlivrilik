@@ -16,7 +16,7 @@ export default function MyOrdersPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const theme = useTheme();
-  const t = useTranslations('MyOrders');
+  const t = useTranslations('Order');
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
