@@ -6,6 +6,10 @@
     "À Propos": "من نحن",
     "Contact": "اتصل بنا",
     "Login": "تسجيل الدخول",
+    "Logout": "تسجيل الخروج",
+    "Profile": "الملف الشخصي",
+    "Settings": "الإعدادات",
+    "MyOrders": "طلباتي",
     "Language": "اللغة",
     "open drawer": "فتح القائمة",
     "footerCopyright": "نليفري ليك © {year}",
@@ -14,8 +18,7 @@
     "footerTermsOfService": "شروط الخدمة",
     "footerFAQ": "الأسئلة الشائعة",
     "footerOurLocation": "موقعنا"
-  },
-  "HomePage": {
+  },  "HomePage": {
     "heroTitle": "حلكم السريع والموثوق",
     "heroSubtitle": "نقوم بتوصيل احتياجاتكم، أينما كنتم، وقتما تريدون.",
     "orderNowButton": "اطلب الآن",
@@ -38,5 +41,20 @@
     "testimonial3Author": "فرد ج",
     "ctaTitle": "هل أنت مستعد للبدء؟",
     "ctaButton": "اتصل بنا على الواتساب!"
+  },  "MyOrders": {
+    "pageTitle": "طلباتي",
+    "noOrders": "ليس لديك أي طلبات بعد",
+    "noOrdersMessage": "بمجرد تقديم طلب، سيظهر هنا للتتبع بسهولة",
+    "startOrdering": "ابدأ الطلب",
+    "orderId": "طلب رقم",
+    "statusDelivered": "تم التوصيل",
+    "statusInTransit": "قيد النقل",
+    "statusPending": "قيد الانتظار",
+    "statusCancelled": "ملغى",
+    "trackingNumber": "رقم التتبع",
+    "total": "المجموع",
+    "trackOrder": "تتبع",
+    "orderDetails": "التفاصيل",
+    "errorLoadingOrders": "خطأ في تحميل طلباتك"
   }
 }

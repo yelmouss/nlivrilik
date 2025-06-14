@@ -123,7 +123,7 @@ export default async function RootLayout({ children, params }) {
     logo: 'https://nlivrilik.vercel.app/logo.png',
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+212-XXX-XXXXXX', // Ajoutez votre numéro de téléphone
+      telephone: '+212-612-865681', // Ajoutez votre numéro de téléphone
       contactType: 'Customer Service',
       areaServed: 'MA', // Maroc
       availableLanguage: ['French', 'English', 'Arabic'],

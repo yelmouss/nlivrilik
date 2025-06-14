@@ -16,7 +16,7 @@ const CallToActionSection = ({ t }) => (
     </Typography>
     <Button
       variant="contained"
-      color="success"
+      color="primary"
       size="large"
       href="https://wa.me/yourwhatsappnumber" 
       target="_blank"

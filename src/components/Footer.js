@@ -1,24 +1,24 @@
-'use client';
-import * as React from 'react';
-import { useEffect, useRef } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
-import { useTheme } from '@mui/material/styles';
-import { useTranslations } from 'next-intl';
-import 'ol/ol.css';
-import Map from 'ol/Map';
-import View from 'ol/View';
-import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
-import Feature from 'ol/Feature';
-import Point from 'ol/geom/Point';
-import { Icon, Style } from 'ol/style';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import { fromLonLat } from 'ol/proj';
+"use client";
+import * as React from "react";
+import { useEffect, useRef } from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import { useTheme } from "@mui/material/styles";
+import { useTranslations } from "next-intl";
+import "ol/ol.css";
+import Map from "ol/Map";
+import View from "ol/View";
+import TileLayer from "ol/layer/Tile";
+import OSM from "ol/source/OSM";
+import Feature from "ol/Feature";
+import Point from "ol/geom/Point";
+import { Icon, Style } from "ol/style";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
+import { fromLonLat } from "ol/proj";
 
 export default function Footer() {
   const t = useTranslations(); // This should be fine if useTranslations() loads all namespaces
@@ -35,14 +35,14 @@ export default function Footer() {
           }),
         ],
         view: new View({
-          center: fromLonLat([3.0588, 36.7764]), // Algiers coordinates
-          zoom: 12,
+          center: fromLonLat([-6.84165, 34.020882]), // Morocco coordinates
+          zoom: 5,
         }),
       });
-
+      // 34.020882, -6.841650
       // Custom marker
       const marker = new Feature({
-        geometry: new Point(fromLonLat([3.0588, 36.7764])),
+        geometry: new Point(fromLonLat([-6.84165, 34.020882])),
       });
 
       // Style for the marker using a custom icon (e.g., logo.png)
@@ -50,10 +50,10 @@ export default function Footer() {
       const iconStyle = new Style({
         image: new Icon({
           anchor: [0.5, 46],
-          anchorXUnits: 'fraction',
-          anchorYUnits: 'pixels',
-          src: '/logo.png', // Path to your logo/marker icon
-          scale: 0.5, // Adjust scale as needed
+          anchorXUnits: "fraction",
+          anchorYUnits: "pixels",
+          src: "/logo.png", // Path to your logo/marker icon
+          scale: 0.2, // Adjust scale as needed
         }),
       });
 
@@ -80,62 +80,101 @@ export default function Footer() {
       sx={{
         py: 6, // Increased padding
         px: 2,
-        mt: 'auto',
-        backgroundColor: theme.palette.background.paper, // Use theme background
-        borderTop: `1px solid ${theme.palette.divider}`, // Add a top border
+        mt: "auto",
+        backgroundColor: theme.palette.primary.main, // Use hero section background
+        borderTop: `1px solid ${theme.palette.secondary.main}`, // Adjusted border color
       }}
     >
       <Container maxWidth="xl">
         <Grid container spacing={5}>
           {/* Map Section */}
-          <Grid size={{xs:12, md:6}}>
-            <Typography variant="h6" gutterBottom sx={{ color: theme.palette.text.primary }}>
-              {t('common.footerOurLocation')}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Typography
+              variant="h6"
+              gutterBottom
+              sx={{ color: theme.palette.custom.lightYellow }}
+            >
+              {t("common.footerOurLocation")}
             </Typography>
             <Box
               ref={mapRef}
               sx={{
-                width: '100%',
-                height: '300px', // Adjust height as needed
+                width: "100%",
+                height: "300px", // Adjust height as needed
                 borderRadius: theme.shape.borderRadius,
-                overflow: 'hidden', // Ensures the map corners are rounded
-                border: `1px solid ${theme.palette.divider}`,
+                overflow: "hidden", // Ensures the map corners are rounded
+                border: `1px solid ${theme.palette.secondary.main}`, // Adjusted border color
               }}
             />
           </Grid>
 
           {/* Useful Links Section */}
-          <Grid size={{xs:12, md:3}}>
-            <Typography variant="h6" gutterBottom sx={{ color: theme.palette.text.primary }}>
-              {t('common.footerUsefulLinks')}
+          <Grid size={{ xs: 12, md: 3 }}>
+            <Typography
+              variant="h6"
+              gutterBottom
+              sx={{ color: theme.palette.custom.lightYellow }}
+            >
+              {t("common.footerUsefulLinks")}
             </Typography>
-            <Link href="#" variant="body2" display="block" sx={{ mb: 1, color: theme.palette.text.secondary }}>
-              {t('common.footerPrivacyPolicy')}
+            <Link
+              href="#"
+              variant="body2"
+              display="block"
+              sx={{ mb: 1, color: theme.palette.custom.lightYellow }}
+            >
+              {t("common.footerPrivacyPolicy")}
             </Link>
-            <Link href="#" variant="body2" display="block" sx={{ mb: 1, color: theme.palette.text.secondary }}>
-              {t('common.footerTermsOfService')}
+            <Link
+              href="#"
+              variant="body2"
+              display="block"
+              sx={{ mb: 1, color: theme.palette.custom.lightYellow }}
+            >
+              {t("common.footerTermsOfService")}
             </Link>
-            <Link href="#" variant="body2" display="block" sx={{ mb: 1, color: theme.palette.text.secondary }}>
-              {t('common.footerFAQ')}
+            <Link
+              href="#"
+              variant="body2"
+              display="block"
+              sx={{ mb: 1, color: theme.palette.custom.lightYellow }}
+            >
+              {t("common.footerFAQ")}
             </Link>
-            <Link href="/contact" variant="body2" display="block" sx={{ color: theme.palette.text.secondary }}>
-              {t('common.Contact')}
+            <Link
+              href="/contact"
+              variant="body2"
+              display="block"
+              sx={{ color: theme.palette.custom.lightYellow }}
+            >
+              {t("common.Contact")}
             </Link>
           </Grid>
 
           {/* Contact/Logo Section or additional links */}
-          <Grid size={{xs:12, md:3}}>
+          <Grid size={{ xs: 12, md: 3 }}>
             {/* You can add more links, contact info, or a small logo here */}
-            <Typography variant="h6" gutterBottom sx={{ color: theme.palette.text.primary }}>
+            <Typography
+              variant="h6"
+              gutterBottom
+              sx={{ color: theme.palette.custom.lightYellow }}
+            >
               NlivriLik
             </Typography>
-            <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-            {t('HomePage.aboutDescription')}
+            <Typography
+              variant="body2"
+              sx={{ color: theme.palette.custom.lightYellow }}
+            >
+              {t("HomePage.aboutDescription")}
             </Typography>
           </Grid>
         </Grid>
-        <Typography variant="body2" align="center" sx={{ pt: 4, color: theme.palette.text.secondary }}>
-          {t('common.footerCopyright', { year: new Date().getFullYear() })}
+        <Typography
+          variant="body2"
+          align="center"
+          sx={{ pt: 4, color: theme.palette.custom.lightYellow }}
+        >
+          {t("common.footerCopyright", { year: new Date().getFullYear() })}
         </Typography>
       </Container>
     </Box>

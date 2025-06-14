@@ -5,7 +5,7 @@ const locales = ['en', 'fr', 'ar'];
 
 export default getRequestConfig(async () => {
   // Determine the locale
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const locale = cookieStore.get('NEXT_LOCALE')?.value || 'fr'; // Default to 'fr' or your preferred default
  
   // Validate that the determined locale is among the supported locales

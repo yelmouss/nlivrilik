@@ -19,6 +19,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import MailIcon from '@mui/icons-material/Mail';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import MenuItem from '@mui/material/MenuItem';
@@ -26,6 +27,13 @@ import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Cookies from 'js-cookie';
+import { useSession, signOut } from 'next-auth/react';
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import Divider from '@mui/material/Divider';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const navItems = [
   { labelKey: 'Accueil', href: '/', icon: <HomeIcon /> },
@@ -34,15 +42,37 @@ const navItems = [
   { labelKey: 'Contact', href: '/contact', icon: <MailIcon /> },
 ];
 
+// Items à afficher uniquement si l'utilisateur est connecté
+const authenticatedItems = [
+  { labelKey: 'MyOrders', href: '/my-orders', icon: <ShoppingBagIcon /> },
+];
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [userMenuAnchorEl, setUserMenuAnchorEl] = React.useState(null);
   const theme = useTheme();
   const t = useTranslations('common');
   const locale = useLocale();
   const router = useRouter();
+  const { data: session, status } = useSession();
+  
+  const isAuthenticated = status === 'authenticated' && session;
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
+  };
+
+  const handleUserMenuOpen = (event) => {
+    setUserMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleUserMenuClose = () => {
+    setUserMenuAnchorEl(null);
+  };
+
+  const handleSignOut = async () => {
+    handleUserMenuClose();
+    await signOut({ redirect: true, callbackUrl: '/' });
   };
 
   const changeLanguage = (event) => {
@@ -55,8 +85,7 @@ export default function Navbar() {
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center', width: 250, backgroundColor: theme.palette.custom.darkTeal, height: '100%' }} role="presentation">
       <Link href="/" passHref style={{ textDecoration: 'none', display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
         <Image src="/logo.png" alt={'NLivri Lik Logo'} width={80} height={24} style={{ objectFit: 'contain' }} className='rounded rounded-full' priority />
-      </Link>
-      <List>
+      </Link>      <List>
         {navItems.map((item) => (
           <ListItem key={item.labelKey} disablePadding>
             <ListItemButton component={Link} href={item.href} sx={{ pl: 2 }}>
@@ -67,10 +96,31 @@ export default function Navbar() {
             </ListItemButton>
           </ListItem>
         ))}
+        
+        {isAuthenticated && authenticatedItems.map((item) => (
+          <ListItem key={item.labelKey} disablePadding>
+            <ListItemButton component={Link} href={item.href} sx={{ pl: 2 }}>
+              <ListItemIcon sx={{ color: theme.palette.custom.lightYellow, minWidth: 'auto', mr: 1 }}>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={t(item.labelKey)} sx={{ color: theme.palette.custom.lightYellow }} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+        
         <ListItem disablePadding sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
-          <Button component={Link} href="/login" variant="contained" color="primary" sx={{ textTransform: 'none', width: '80%' }}>
-            {t('Login')}
-          </Button>
+          {isAuthenticated ? (
+            <ListItemButton onClick={handleSignOut} sx={{ justifyContent: 'center' }}>
+              <ListItemIcon sx={{ color: theme.palette.custom.lightYellow, minWidth: 'auto', mr: 1 }}>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary={t('Logout')} sx={{ color: theme.palette.custom.lightYellow }} />
+            </ListItemButton>
+          ) : (
+            <Button component={Link} href="/auth/signin" variant="contained" color="primary" sx={{ textTransform: 'none', width: '80%' }}>
+              {t('Login')}
+            </Button>
+          )}
         </ListItem>
         <ListItem sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
           <FormControl sx={{ m: 1, minWidth: '80%' }} size="small">
@@ -120,9 +170,73 @@ export default function Navbar() {
                 {t(item.labelKey)}
               </Button>
             ))}
-            <Button component={Link} href="/login" variant="contained" color="primary" sx={{ marginLeft: '16px' }}>
-              {t('Login')}
-            </Button>
+            
+            {isAuthenticated ? (
+              <>
+                <Button 
+                  onClick={handleUserMenuOpen}
+                  startIcon={
+                    session.user.image ? (
+                      <Avatar 
+                        src={session.user.image} 
+                        alt={session.user.name} 
+                        sx={{ width: 24, height: 24 }}
+                      />
+                    ) : (
+                      <AccountCircleIcon />
+                    )
+                  }
+                  sx={{
+                    fontWeight: 500,
+                    margin: '0 10px',
+                    color: theme.palette.custom.darkTeal,
+                    '&:hover': { backgroundColor: 'rgba(9, 107, 104, 0.08)' },
+                  }}
+                >
+                  {session.user.name}
+                </Button>
+                <Menu
+                  anchorEl={userMenuAnchorEl}
+                  open={Boolean(userMenuAnchorEl)}
+                  onClose={handleUserMenuClose}
+                  PaperProps={{
+                    elevation: 3,
+                    sx: { minWidth: 180 }
+                  }}
+                >
+                  <MenuItem onClick={handleUserMenuClose} component={Link} href="/profile">
+                    <ListItemIcon>
+                      <AccountCircleIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary={t('Profile')} />
+                  </MenuItem>
+                  <MenuItem onClick={handleUserMenuClose} component={Link} href="/my-orders">
+                    <ListItemIcon>
+                      <ShoppingBagIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary={t('MyOrders')} />
+                  </MenuItem>
+                  <MenuItem onClick={handleUserMenuClose} component={Link} href="/settings">
+                    <ListItemIcon>
+                      <SettingsIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary={t('Settings')} />
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={handleSignOut}>
+                    <ListItemIcon>
+                      <LogoutIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary={t('Logout')} />
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <Button component={Link} href="/auth/signin" variant="contained" color="primary" sx={{ marginLeft: '16px' }}>
+                {t('Login')}
+              </Button>
+            )}
+
             <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
               <InputLabel id="language-select-label">{t('Language')}</InputLabel>
               <Select

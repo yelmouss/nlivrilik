@@ -6,16 +6,19 @@
     "À Propos": "À Propos",
     "Contact": "Contact",
     "Login": "Connexion",
+    "Logout": "Déconnexion",
+    "Profile": "Profil",
+    "Settings": "Paramètres",
     "Language": "Langue",  
     "open drawer": "ouvrir le tiroir",
+    "MyOrders": "Mes Commandes",
     "footerCopyright": "NlivriLik © {year}",
     "footerUsefulLinks": "Liens Utiles",
     "footerPrivacyPolicy": "Politique de Confidentialité",
     "footerTermsOfService": "Conditions d'Utilisation",
     "footerFAQ": "FAQ",
     "footerOurLocation": "Notre Emplacement"
-  },
-  "HomePage": {
+  },  "HomePage": {
     "heroTitle": "Votre Solution Rapide et Fiable",
     "heroSubtitle": "Nous livrons vos besoins, où que vous soyez, quand vous le voulez.",
     "orderNowButton": "Commander Maintenant",
@@ -38,5 +41,20 @@
     "testimonial3Author": "Particulier C",
     "ctaTitle": "Prêt à commencer ?",
     "ctaButton": "Contactez-nous sur WhatsApp !"
+  },  "MyOrders": {
+    "pageTitle": "Mes Commandes",
+    "noOrders": "Vous n'avez pas encore de commandes",
+    "noOrdersMessage": "Dès que vous passerez une commande, elle apparaîtra ici pour faciliter le suivi",
+    "startOrdering": "Commencer à commander",
+    "orderId": "Commande N°",
+    "statusDelivered": "Livré",
+    "statusInTransit": "En transit",
+    "statusPending": "En attente",
+    "statusCancelled": "Annulé",
+    "trackingNumber": "N° de suivi",
+    "total": "Total",
+    "trackOrder": "Suivre",
+    "orderDetails": "Détails",
+    "errorLoadingOrders": "Erreur lors du chargement de vos commandes"
   }
 }

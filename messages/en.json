@@ -6,6 +6,10 @@
     "À Propos": "About Us",
     "Contact": "Contact",
     "Login": "Login",
+    "Logout": "Logout",
+    "Profile": "Profile",
+    "Settings": "Settings",
+    "MyOrders": "My Orders",
     "Language": "Language",
     "open drawer": "open drawer",
     "footerCopyright": "NlivriLik © {year}",
@@ -14,8 +18,7 @@
     "footerTermsOfService": "Terms of Service",
     "footerFAQ": "FAQ",
     "footerOurLocation": "Our Location"
-  },
-  "HomePage": {
+  },  "HomePage": {
     "heroTitle": "Your Fast and Reliable Solution",
     "heroSubtitle": "We deliver your needs, wherever you are, whenever you want.",
     "orderNowButton": "Order Now",
@@ -38,5 +41,20 @@
     "testimonial3Author": "Individual C",
     "ctaTitle": "Ready to get started?",
     "ctaButton": "Contact us on WhatsApp!"
+  },  "MyOrders": {
+    "pageTitle": "My Orders",
+    "noOrders": "You don't have any orders yet",
+    "noOrdersMessage": "Once you place an order, it will appear here for easy tracking",
+    "startOrdering": "Start ordering",
+    "orderId": "Order #",
+    "statusDelivered": "Delivered",
+    "statusInTransit": "In transit",
+    "statusPending": "Pending",
+    "statusCancelled": "Cancelled",
+    "trackingNumber": "Tracking number",
+    "total": "Total",
+    "trackOrder": "Track",
+    "orderDetails": "Details",
+    "errorLoadingOrders": "Error loading your orders"
   }
 }

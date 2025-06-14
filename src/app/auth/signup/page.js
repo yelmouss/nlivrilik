@@ -1,0 +1,201 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Container, TextField, Button, Typography, Box, Alert, Paper, CircularProgress } from '@mui/material'
+import { useTheme } from '@mui/material/styles';
+import { useSession } from 'next-auth/react'
+
+export default function SignUp() {
+  const router = useRouter()
+  const theme = useTheme();
+  const { data: session, status } = useSession();
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  // Redirection si l'utilisateur est déjà connecté
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.push('/my-orders')
+    }
+    setLoading(false)
+  }, [status, router])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setSuccess('')
+    setLoading(true)
+
+    if (!name || !email || !password) {
+      setError('All fields are necessary.')
+      setLoading(false)
+      return
+    }
+
+    try {
+      const resUserExists = await fetch('/api/auth/check-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const { user } = await resUserExists.json()
+
+      if (user) {
+        setError('User already exists.')
+        setLoading(false)
+        return
+      }
+
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      })
+
+      setLoading(false)
+
+      if (res.ok) {
+        const data = await res.json()
+        setSuccess(data.message || 'Inscription réussie ! Veuillez vérifier votre email pour confirmer votre compte.')
+        setName('')
+        setEmail('')
+        setPassword('')
+        // router.push('/auth/signin'); // Optionally redirect
+      } else {
+        const data = await res.json()
+        setError(data.message || 'User registration failed.')
+      }
+    } catch (error) {
+      console.error('Error during registration:', error)
+      setError('An error occurred during registration.')
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <Container sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <CircularProgress />
+      </Container>
+    );
+  }
+
+  return (
+    <Container component="main" maxWidth="xs" sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Paper elevation={3} sx={{ padding: 4, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: theme.palette.background.paper }}>
+        <Typography component="h1" variant="h5" color="primary">
+          Sign Up
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
+          {error && (
+            <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert severity="success" sx={{ width: '100%', mb: 2 }}>
+              {success}
+            </Alert>
+          )}
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="name"
+            label="Full Name"
+            name="name"
+            autoComplete="name"
+            autoFocus
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            sx={{
+              '& label.Mui-focused': {
+                color: theme.palette.text.primary,
+              },
+              '& .MuiOutlinedInput-root': {
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: theme.palette.primary.main,
+                },
+              },
+            }}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            sx={{
+              '& label.Mui-focused': {
+                color: theme.palette.text.primary,
+              },
+              '& .MuiOutlinedInput-root': {
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: theme.palette.primary.main,
+                },
+              },
+            }}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            sx={{
+              '& label.Mui-focused': {
+                color: theme.palette.text.primary,
+              },
+              '& .MuiOutlinedInput-root': {
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: theme.palette.primary.main,
+                },
+              },
+            }}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
+          </Button>
+          <Typography variant="body2" align="center">
+            Already have an account?{' '}
+            <Link href="/auth/signin" passHref>
+              <Typography component="span" color="primary" sx={{ textDecoration: 'underline', cursor: 'pointer' }}>
+                Sign In
+              </Typography>
+            </Link>
+          </Typography>
+        </Box>
+      </Paper>
+    </Container>
+  )
+}
