@@ -7,7 +7,31 @@
     "Contact": "Contact",
     "Login": "Login",
     "Language": "Language",
-    "NLivri Lik Logo Alt": "NLivri Lik Logo",
+   
     "open drawer": "open drawer"
+  },
+  "HomePage": {
+    "heroTitle": "Your Fast and Reliable Solution",
+    "heroSubtitle": "We deliver your needs, wherever you are, whenever you want.",
+    "orderNowButton": "Order Now",
+    "servicesOfferedTitle": "Our Services",
+    "servicesOfferedSubtitle": "Discover what we can do for you.",
+    "serviceCard1Title": "Express Delivery",
+    "serviceCard1Description": "Receive your packages in record time.",
+    "serviceCard2Title": "Real-Time Tracking",
+    "serviceCard2Description": "Track your delivery every step of the way.",
+    "serviceCard3Title": "24/7 Customer Support",
+    "serviceCard3Description": "Our team is always here to help you.",
+    "aboutTitle": "About Us",
+    "aboutDescription": "NLivri Lik is dedicated to providing exceptional delivery service with a focus on customer satisfaction. Our mission is to simplify your delivery needs with efficiency and reliability. We strive to offer innovative solutions and a seamless experience for all our clients, ensuring that your packages arrive safely and on time. Our commitment to excellence drives us to continuously improve and adapt to the evolving needs of our customers.",
+    "testimonialsTitle": "What Our Customers Say",
+    "testimonial1Text": "Amazing service! Fast and reliable.",
+    "testimonial1Author": "Satisfied Customer A",
+    "testimonial2Text": "I use NLivri Lik for all my business deliveries.",
+    "testimonial2Author": "Entrepreneur B",
+    "testimonial3Text": "The best delivery service I have ever used.",
+    "testimonial3Author": "Individual C",
+    "ctaTitle": "Ready to get started?",
+    "ctaButton": "Contact us on WhatsApp!"
   }
 }

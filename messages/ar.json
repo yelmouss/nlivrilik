@@ -7,7 +7,30 @@
     "Contact": "اتصل بنا",
     "Login": "تسجيل الدخول",
     "Language": "اللغة",
-    "NLivri Lik Logo Alt": "شعار إنليفري لك",
     "open drawer": "فتح القائمة"
+  },
+  "HomePage": {
+    "heroTitle": "حلكم السريع والموثوق",
+    "heroSubtitle": "نقوم بتوصيل احتياجاتكم، أينما كنتم، وقتما تريدون.",
+    "orderNowButton": "اطلب الآن",
+    "servicesOfferedTitle": "خدماتنا",
+    "servicesOfferedSubtitle": "اكتشف ما يمكننا القيام به من أجلك.",
+    "serviceCard1Title": "توصيل سريع",
+    "serviceCard1Description": "استلم طرودك في وقت قياسي.",
+    "serviceCard2Title": "تتبع في الوقت الحقيقي",
+    "serviceCard2Description": "تتبع توصيلك في كل خطوة.",
+    "serviceCard3Title": "دعم عملاء 24/7",
+    "serviceCard3Description": "فريقنا دائمًا هنا لمساعدتك.",
+    "aboutTitle": "من نحن",
+    "aboutDescription": "تلتزم إنليفري لك بتقديم خدمة توصيل استثنائية مع التركيز على رضا العملاء. مهمتنا هي تبسيط احتياجات التوصيل الخاصة بك بكفاءة وموثوقية. نسعى جاهدين لتقديم حلول مبتكرة وتجربة سلسة لجميع عملائنا ، مما يضمن وصول طرودك بأمان وفي الوقت المحدد. إن التزامنا بالتميز يدفعنا إلى التحسين المستمر والتكيف مع الاحتياجات المتطورة لعملائنا.",
+    "testimonialsTitle": "ماذا يقول عملاؤنا",
+    "testimonial1Text": "خدمة مذهلة! سريعة وموثوقة.",
+    "testimonial1Author": "عميل راضٍ أ",
+    "testimonial2Text": "أستخدم إنليفري لك لجميع توصيلاتي التجارية.",
+    "testimonial2Author": "رجل أعمال ب",
+    "testimonial3Text": "أفضل خدمة توصيل استخدمتها على الإطلاق.",
+    "testimonial3Author": "فرد ج",
+    "ctaTitle": "هل أنت مستعد للبدء؟",
+    "ctaButton": "اتصل بنا على الواتساب!"
   }
 }

@@ -54,7 +54,7 @@ export default function Navbar() {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center', width: 250, backgroundColor: theme.palette.custom.darkTeal, height: '100%' }} role="presentation">
       <Link href="/" passHref style={{ textDecoration: 'none', display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
-        <Image src="/logo.png" alt={t('NLivri Lik Logo Alt')} width={80} height={24} style={{ objectFit: 'contain', borderRadius : '50%' }} className='rounded rounded-full' priority />
+        <Image src="/logo.png" alt={'NLivri Lik Logo'} width={80} height={24} style={{ objectFit: 'contain' }} className='rounded rounded-full' priority />
       </Link>
       <List>
         {navItems.map((item) => (
@@ -77,12 +77,12 @@ export default function Navbar() {
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <AppBar component="nav" position="static">
+    <>
+      <AppBar component="nav" position="sticky" sx={{ top: 0, zIndex: (theme) => theme.zIndex.appBar }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Link href="/" passHref style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-              <Image src="/logo.png" alt={t('NLivri Lik Logo Alt')} width={80} height={24} style={{ objectFit: 'contain', borderRadius : '50%' }} className='rounded rounded-full' priority />
+              <Image src="/logo.png" alt={'NLivri Lik Logo '} width={80} height={24} style={{ objectFit: 'contain' }} className='rounded rounded-full' priority />
             </Link>
           </Box>
 
@@ -148,6 +148,6 @@ export default function Navbar() {
       >
         {drawer}
       </Drawer>
-    </Box>
+    </>
   );
 }

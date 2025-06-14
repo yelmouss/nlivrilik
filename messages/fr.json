@@ -6,8 +6,31 @@
     "À Propos": "À Propos",
     "Contact": "Contact",
     "Login": "Connexion",
-    "Language": "Langue",
-    "NLivri Lik Logo Alt": "Logo NLivri Lik",
+    "Language": "Langue",  
     "open drawer": "ouvrir le tiroir"
+  },
+  "HomePage": {
+    "heroTitle": "Votre Solution Rapide et Fiable",
+    "heroSubtitle": "Nous livrons vos besoins, où que vous soyez, quand vous le voulez.",
+    "orderNowButton": "Commander Maintenant",
+    "servicesOfferedTitle": "Nos Services",
+    "servicesOfferedSubtitle": "Découvrez ce que nous pouvons faire pour vous.",
+    "serviceCard1Title": "Livraison Express",
+    "serviceCard1Description": "Recevez vos colis en un temps record.",
+    "serviceCard2Title": "Suivi en Temps Réel",
+    "serviceCard2Description": "Suivez votre livraison à chaque étape.",
+    "serviceCard3Title": "Support Client 24/7",
+    "serviceCard3Description": "Notre équipe est toujours là pour vous aider.",
+    "aboutTitle": "À Propos de Nous",
+    "aboutDescription": "NLivri Lik se consacre à fournir un service de livraison exceptionnel en mettant l'accent sur la satisfaction du client. Notre mission est de simplifier vos besoins de livraison avec efficacité et fiabilité. Nous nous efforçons d'offrir des solutions innovantes et une expérience transparente à tous nos clients, en veillant à ce que vos colis arrivent en toute sécurité et à temps. Notre engagement envers l'excellence nous pousse à nous améliorer continuellement et à nous adapter aux besoins changeants de nos clients.",
+    "testimonialsTitle": "Ce Que Disent Nos Clients",
+    "testimonial1Text": "Service incroyable ! Rapide et fiable.",
+    "testimonial1Author": "Client Satisfait A",
+    "testimonial2Text": "J'utilise NLivri Lik pour toutes mes livraisons professionnelles.",
+    "testimonial2Author": "Entrepreneur B",
+    "testimonial3Text": "Le meilleur service de livraison que j'ai jamais utilisé.",
+    "testimonial3Author": "Particulier C",
+    "ctaTitle": "Prêt à commencer ?",
+    "ctaButton": "Contactez-nous sur WhatsApp !"
   }
 }
