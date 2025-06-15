@@ -695,7 +695,7 @@ export default function AdminOrders() {
                 <Divider sx={{ mb: 2 }} />
 
                 <Grid container spacing={1}>
-                  <Grid item xs={4}> {/* Changed size prop */
+                  <Grid item xs={4}> {/* Changed size prop */}
                     <Typography variant="body2" color="textSecondary">
                       Order ID
                     </Typography>
