@@ -178,17 +178,16 @@ export default function AdminDashboard() {
           <Typography color="error">{error}</Typography>
         </Paper>
       ) : (
-        <>
-          {/* Removed Paper for overall stats, focusing on individual cards */}
+        <>          {/* Removed Paper for overall stats, focusing on individual cards */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid size xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Paper elevation={3} sx={{ p: 3 }}>
                 <Typography variant="h5" gutterBottom>
                   Order Statistics
                 </Typography>
                 <Divider sx={{ mb: 2 }} />
                 <Grid container spacing={2}>
-                  <Grid size xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Box sx={{ textAlign: "center" }}>
                       <Typography variant="h4" color="primary">
                         {dashboardData.totalOrders}
@@ -198,7 +197,7 @@ export default function AdminDashboard() {
                       </Typography>
                     </Box>
                   </Grid>
-                  <Grid size xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Box sx={{ textAlign: "center" }}>
                       <Typography variant="h4" color="warning.main">
                         {dashboardData.pendingOrders}
@@ -208,7 +207,7 @@ export default function AdminDashboard() {
                       </Typography>
                     </Box>
                   </Grid>
-                  <Grid size xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Box sx={{ textAlign: "center" }}>
                       <Typography variant="h4" color="info.main">
                         {dashboardData.confirmedOrders}
@@ -218,7 +217,7 @@ export default function AdminDashboard() {
                       </Typography>
                     </Box>
                   </Grid>
-                  <Grid size xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Box sx={{ textAlign: "center" }}>
                       <Typography variant="h4" color="success.main">
                         {dashboardData.deliveredOrders}
@@ -232,14 +231,13 @@ export default function AdminDashboard() {
               </Paper>
             </Grid>
 
-            <Grid size xs={12} md={6}>
-              <Paper elevation={3} sx={{ p: 3 }}>
+            <Grid size={{ xs: 12, md: 6 }}>              <Paper elevation={3} sx={{ p: 3 }}>
                 <Typography variant="h5" gutterBottom>
                   User Statistics
                 </Typography>
                 <Divider sx={{ mb: 2 }} />
                 <Grid container spacing={2}>
-                  <Grid size xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Box sx={{ textAlign: "center" }}>
                       <Typography variant="h4" color="primary">
                         {dashboardData.totalUsers}
@@ -249,7 +247,7 @@ export default function AdminDashboard() {
                       </Typography>
                     </Box>
                   </Grid>
-                  <Grid size xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Box sx={{ textAlign: "center" }}>
                       <Typography variant="h4" color="secondary.main">
                         {dashboardData.totalAdmins}
@@ -259,7 +257,7 @@ export default function AdminDashboard() {
                       </Typography>
                     </Box>
                   </Grid>
-                  <Grid size xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Box sx={{ textAlign: "center" }}>
                       <Typography variant="h4" color="info.main">
                         {dashboardData.totalDeliveryMen}
@@ -269,7 +267,7 @@ export default function AdminDashboard() {
                       </Typography>
                     </Box>
                   </Grid>
-                  <Grid size xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Box sx={{ textAlign: "center" }}>
                       <Typography variant="h4" color="success.main">
                         {dashboardData.totalClients}
@@ -282,11 +280,9 @@ export default function AdminDashboard() {
                 </Grid>
               </Paper>
             </Grid>
-          </Grid>
-
-          {/* Quick Access Cards */}
+          </Grid>          {/* Quick Access Cards */}
           <Grid container spacing={3}>
-            <Grid size xs={12} sm={6} md={4}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <Card elevation={3}>
                 <CardContent>
                   <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -318,7 +314,7 @@ export default function AdminDashboard() {
               </Card>
             </Grid>
 
-            <Grid size xs={12} sm={6} md={4}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <Card elevation={3}>
                 <CardContent>
                   <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -349,7 +345,7 @@ export default function AdminDashboard() {
               </Card>
             </Grid>
 
-            <Grid size xs={12} sm={6} md={4}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <Card elevation={3}>
                 <CardContent>
                   <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>

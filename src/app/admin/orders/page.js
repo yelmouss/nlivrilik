@@ -8,98 +8,40 @@ import {
   Container,
   Typography,
   Box,
-  Paper,
-  Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
   Button,
-  TextField,
-  MenuItem,
-  IconButton,
-  Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Snackbar,
   Alert,
   CircularProgress,
-  Divider,
-  Tabs,
-  Tab,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import OrderStatus from "@/models/OrderStatus";
 
-// Function to format the date
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
-// Component to display status with corresponding color
-const StatusChip = ({ status }) => {
-  let color = "default";
-
-  switch (status) {
-    case OrderStatus.PENDING:
-      color = "warning";
-      break;
-    case OrderStatus.CONFIRMED:
-      color = "info";
-      break;
-    case OrderStatus.DELIVERED:
-      color = "success";
-      break;
-    case OrderStatus.CANCELLED:
-      color = "error";
-      break;
-    default:
-      color = "default";
-  }
-
-  return <Chip label={status} color={color} size="small" />;
-};
+// Import our custom components
+import OrderFilters from "@/components/admin/orders/OrderFilters";
+import OrderTable from "@/components/admin/orders/OrderTable";
+import ViewOrderDialog from "@/components/admin/orders/ViewOrderDialog";
+import EditOrderDialog from "@/components/admin/orders/EditOrderDialog";
+import DeleteOrderDialog from "@/components/admin/orders/DeleteOrderDialog";
 
 export default function AdminOrders() {
   const theme = useTheme();
   const router = useRouter();
   const { data: session, status } = useSession();
-
   // States for managing orders
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   // States for pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
   // States for filtering
   const [statusFilter, setStatusFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-
   // States for dialogs
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-
   // State for snackbar
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -110,23 +52,22 @@ export default function AdminOrders() {
   // States for editing an order
   const [editFormData, setEditFormData] = useState({
     status: "",
-    deliveryMan: "", // This will store the ID of the delivery man
+    deliveryMan: "",
     note: "",
   });
-  const [deliveryMenList, setDeliveryMenList] = useState([]); // State for delivery men
+  const [deliveryMenList, setDeliveryMenList] = useState([]);
 
   // Check if user is admin
   useEffect(() => {
     if (status === "authenticated") {
       if (session.user.role !== "ADMIN") {
-        // Redirect if user is not admin
         router.push("/");
       }
     } else if (status === "unauthenticated") {
-      // Redirect to login page if not authenticated
       router.push("/auth/signin");
     }
   }, [status, session, router]);
+
   // Function to fetch orders
   const fetchOrders = useCallback(async () => {
     try {
@@ -161,41 +102,32 @@ export default function AdminOrders() {
   // Function to fetch delivery men
   const fetchDeliveryMen = useCallback(async () => {
     try {
-      const response = await fetch("/api/admin/users?role=DELIVERY_MAN", { // Assuming an endpoint to get users by role
+      const response = await fetch("/api/admin/users?role=DELIVERY_MAN", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
+
       if (!response.ok) {
         throw new Error("Error fetching delivery men");
       }
+
       const data = await response.json();
+
       if (data.success) {
         setDeliveryMenList(data.users);
-      } else {
-        console.error(data.message || "Error fetching delivery men");
-        setSnackbar({
-          open: true,
-          message: data.message || "Could not load delivery men.",
-          severity: "error",
-        });
       }
     } catch (err) {
-      console.error(err.message || "An error occurred while fetching delivery men");
-      setSnackbar({
-        open: true,
-        message: err.message || "An error occurred while fetching delivery men.",
-        severity: "error",
-      });
+      console.error("Error fetching delivery men:", err);
     }
   }, []);
 
   // Load orders and delivery men when page loads
   useEffect(() => {
-    if (status === "authenticated" && session.user.role === "ADMIN") {
+    if (status === "authenticated" && session?.user?.role === "ADMIN") {
       fetchOrders();
-      fetchDeliveryMen(); // Fetch delivery men
+      fetchDeliveryMen();
     }
   }, [status, session, fetchOrders, fetchDeliveryMen]);
 
@@ -234,83 +166,94 @@ export default function AdminOrders() {
     setPage(newPage);
   };
 
-  // Fonction pour changer le nombre de lignes par page
+  // Function to change rows per page
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  // Fonctions pour gérer les dialogues
+  // Functions to handle dialogs
   const handleViewOrder = (order) => {
     setSelectedOrder(order);
     setViewDialogOpen(true);
   };
-
   const handleEditOrder = (order) => {
     setSelectedOrder(order);
     setEditFormData({
       status: order.status,
-      // Ensure deliveryMan is an ID or empty string
-      deliveryMan: order.deliveryDetails?.assignedTo?._id || order.deliveryDetails?.assignedTo || "",
-      note: "", // Clear note on new edit
+      deliveryMan: order.deliveryDetails?.assignedTo?._id || "",
+      note: order.deliveryDetails?.deliveryNotes || "",
     });
     setEditDialogOpen(true);
   };
 
-  // Fonction pour mettre à jour une commande
+  const handleDeleteOrder = (order) => {
+    setSelectedOrder(order);
+    setDeleteDialogOpen(true);
+  };
+
+  // Handle form changes for edit dialog
+  const handleEditFormChange = (event) => {
+    const { name, value } = event.target;
+    setEditFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  // Function to update an order
   const handleUpdateOrder = async () => {
+    if (!selectedOrder) return;
+
     try {
       setLoading(true);
-      setError(null);
 
-      // Validation de base
-      if (!editFormData.status) {
-        setSnackbar({
-          open: true,
-          message: "Le statut est requis",
-          severity: "error",
-        });
-        setLoading(false);
-        return;
+      // Prepare data structure to match API expectations
+      const updateData = {
+        status: editFormData.status,
+      };
+
+      // Add delivery details if there are changes
+      if (editFormData.deliveryMan || editFormData.note) {
+        updateData.deliveryDetails = {};
+
+        if (editFormData.deliveryMan) {
+          updateData.deliveryDetails.assignedTo = editFormData.deliveryMan;
+        }
+
+        if (editFormData.note) {
+          updateData.deliveryDetails.deliveryNotes = editFormData.note;
+        }
       }
+
       const response = await fetch(`/api/admin/orders/${selectedOrder._id}`, {
-        method: "PATCH",
+        method: "PATCH", // Changed from PUT to PATCH
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          status: editFormData.status,
-          deliveryDetails: {
-            assignedTo: editFormData.deliveryMan || undefined,
-          },
-          note: editFormData.note,
-        }),
+        body: JSON.stringify(updateData),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        // Fermer le dialogue et rafraîchir la liste
-        setEditDialogOpen(false);
-        fetchOrders();
-
+      if (response.ok && data.success) {
         setSnackbar({
           open: true,
-          message: "Commande mise à jour avec succès",
+          message: "Order updated successfully!",
           severity: "success",
         });
+        setEditDialogOpen(false);
+        fetchOrders(); // Refresh orders list
       } else {
         setSnackbar({
           open: true,
-          message:
-            data.message || "Erreur lors de la mise à jour de la commande",
+          message: data.message || "Error updating order",
           severity: "error",
         });
       }
     } catch (err) {
       setSnackbar({
         open: true,
-        message: err.message || "Erreur lors de la mise à jour de la commande",
+        message: "Error updating order",
         severity: "error",
       });
     } finally {
@@ -318,17 +261,12 @@ export default function AdminOrders() {
     }
   };
 
-  // Fonction pour ouvrir le dialogue de suppression
-  const handleDeleteOrder = (order) => {
-    setSelectedOrder(order);
-    setDeleteDialogOpen(true);
-  };
-
-  // Fonction pour confirmer la suppression d'une commande
+  // Function to delete an order
   const handleConfirmDelete = async () => {
+    if (!selectedOrder) return;
+
     try {
       setLoading(true);
-      setError(null);
 
       const response = await fetch(`/api/admin/orders/${selectedOrder._id}`, {
         method: "DELETE",
@@ -339,28 +277,25 @@ export default function AdminOrders() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        // Fermer le dialogue et rafraîchir la liste
-        setDeleteDialogOpen(false);
-        fetchOrders();
-
+      if (response.ok && data.success) {
         setSnackbar({
           open: true,
-          message: "Commande supprimée avec succès",
+          message: "Order deleted successfully!",
           severity: "success",
         });
+        setDeleteDialogOpen(false);
+        fetchOrders(); // Refresh orders list
       } else {
         setSnackbar({
           open: true,
-          message:
-            data.message || "Erreur lors de la suppression de la commande",
+          message: data.message || "Error deleting order",
           severity: "error",
         });
       }
     } catch (err) {
       setSnackbar({
         open: true,
-        message: err.message || "Erreur lors de la suppression de la commande",
+        message: "Error deleting order",
         severity: "error",
       });
     } finally {
@@ -368,571 +303,111 @@ export default function AdminOrders() {
     }
   };
 
-  // Fonction pour fermer le snackbar
-  const handleCloseSnackbar = () => {
-    setSnackbar({
-      ...snackbar,
-      open: false,
-    });
+  // Handle filter changes
+  const handleStatusFilterChange = (event) => {
+    setStatusFilter(event.target.value);
+    setPage(0); // Reset to first page when filtering
   };
 
-  // Si l'utilisateur n'est pas encore authentifié, afficher un chargement
+  const handleSearchTermChange = (event) => {
+    setSearchTerm(event.target.value);
+    setPage(0); // Reset to first page when searching
+  };
+
+  // Function to close snackbar
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  // If user is not authenticated yet, show loading
   if (status === "loading") {
     return (
-      <Container
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-        }}
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
       >
         <CircularProgress />
-      </Container>
+      </Box>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Paper elevation={3} sx={{ p: 3 }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 3,
-          }}
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
+        <Typography variant="h4" component="h1">
+          Orders Management
+        </Typography>
+        <Button
+          variant="outlined"
+          startIcon={<RefreshIcon />}
+          onClick={fetchOrders}
+          disabled={loading}
         >
-          <Typography variant="h4" component="h1">
-            Order Management
-          </Typography>
-          <Button
-            startIcon={<RefreshIcon />}
-            onClick={fetchOrders}
-            variant="contained"
-          >
-            Refresh
-          </Button>
-        </Box>
+          {loading ? <CircularProgress size={20} /> : "Refresh"}
+        </Button>
+      </Box>
 
-        <Box sx={{ display: "flex", mb: 3, gap: 2, flexWrap: "wrap" }}>
-          <TextField
-            select
-            label="Filter by status"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            variant="outlined"
-            size="small"
-            sx={{ minWidth: 200 }}
-          >
-            {" "}
-            <MenuItem value="all">All statuses</MenuItem>
-            <MenuItem value={OrderStatus.PENDING}>Pending</MenuItem>
-            <MenuItem value={OrderStatus.CONFIRMED}>Confirmed</MenuItem>
-            <MenuItem value={OrderStatus.DELIVERED}>Delivered</MenuItem>
-            <MenuItem value={OrderStatus.CANCELLED}>Cancelled</MenuItem>
-          </TextField>
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
 
-          <TextField
-            label="Search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            variant="outlined"
-            size="small"
-            sx={{ flexGrow: 1 }}
-            placeholder="Search for an order..."
-          />
-        </Box>
+      {/* Order Filters */}
+      <OrderFilters
+        statusFilter={statusFilter}
+        onStatusFilterChange={handleStatusFilterChange}
+        searchTerm={searchTerm}
+        onSearchTermChange={handleSearchTermChange}
+      />
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
+      {/* Orders Table */}
+      <OrderTable
+        orders={paginatedOrders}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        totalCount={filteredOrders.length}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+        handleViewOrder={handleViewOrder}
+        handleEditOrder={handleEditOrder}
+        handleDeleteOrder={handleDeleteOrder}
+      />
 
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Order ID</TableCell>
-                <TableCell>Customer</TableCell>
-                <TableCell>Order Date</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Delivery Address</TableCell>
-                <TableCell align="right">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {loading && orders.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    <CircularProgress size={24} sx={{ my: 2 }} />
-                  </TableCell>
-                </TableRow>
-              ) : paginatedOrders.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    No orders found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                paginatedOrders.map((order) => (
-                  <TableRow key={order._id} hover>
-                    <TableCell>
-                      <Typography
-                        variant="body2"
-                        sx={{ fontFamily: "monospace" }}
-                      >
-                        {order._id.substring(order._id.length - 8)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2">
-                        {order.contactInfo.fullName}
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {order.contactInfo.email}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>{formatDate(order.createdAt)}</TableCell>
-                    <TableCell>
-                      <StatusChip status={order.status} />
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" noWrap sx={{ maxWidth: 200 }}>
-                        {order.deliveryAddress.formattedAddress}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <IconButton
-                        size="small"
-                        color="primary"
-                        onClick={() => handleViewOrder(order)}
-                        title="View details"
-                      >
-                        <VisibilityIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        color="secondary"
-                        onClick={() => handleEditOrder(order)}
-                        title="Edit order"
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleDeleteOrder(order)}
-                        title="Delete order"
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 50]}
-          component="div"
-          count={filteredOrders.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          labelRowsPerPage="Rows per page :"
-        />
-      </Paper>
-
-      {/* Dialogue de visualisation des détails de commande */}
-      <Dialog
+      {/* View Order Dialog */}
+      <ViewOrderDialog
         open={viewDialogOpen}
         onClose={() => setViewDialogOpen(false)}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>Order Details</DialogTitle>
-        <DialogContent>
-          {selectedOrder && (
-            <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid item xs={12} md={6}> {/* Changed size prop */}
-                <Typography variant="subtitle1">Contact Information</Typography>
-                <Divider sx={{ mb: 2 }} />
+        order={selectedOrder}
+      />
 
-                <Grid container spacing={1}>
-                  <Grid item xs={4}> {/* Changed size prop */}
-                    <Typography variant="body2" color="textSecondary">
-                      Name
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}> {/* Changed size prop */}
-                    <Typography variant="body2">
-                      {selectedOrder.contactInfo.fullName}
-                    </Typography>
-                  </Grid>
-
-                  <Grid item xs={4}> {/* Changed size prop */}
-                    <Typography variant="body2" color="textSecondary">
-                      Email
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}> {/* Changed size prop */}
-                    <Typography variant="body2">
-                      {selectedOrder.contactInfo.email}
-                    </Typography>
-                  </Grid>
-
-                  <Grid item xs={4}> {/* Changed size prop */}
-                    <Typography variant="body2" color="textSecondary">
-                      Phone Number
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}> {/* Changed size prop */}
-                    <Typography variant="body2">
-                      {selectedOrder.contactInfo.phoneNumber}
-                    </Typography>
-                  </Grid>
-                </Grid>
-
-                <Typography variant="subtitle1" sx={{ mt: 3 }}>
-                  Delivery Address
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-
-                <Typography variant="body2" paragraph>
-                  {selectedOrder.deliveryAddress.formattedAddress}
-                </Typography>
-
-                {selectedOrder.deliveryAddress.additionalInfo && (
-                  <>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      Additional Information
-                    </Typography>
-                    <Typography variant="body2" paragraph>
-                      {selectedOrder.deliveryAddress.additionalInfo}
-                    </Typography>
-                  </>
-                )}
-
-                <Typography variant="subtitle1" sx={{ mt: 3 }}>
-                  Financial Details
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-
-                <Grid container spacing={1}>
-                  <Grid item xs={4}> {/* Changed size prop */}
-                    <Typography variant="body2" color="textSecondary">
-                      Payment Method
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}> {/* Changed size prop */}
-                    <Typography variant="body2">
-                      {selectedOrder.financialDetails?.paymentMethod
-                        ? `paymentMethod_${selectedOrder.financialDetails.paymentMethod}`
-                        : "Not specified"}
-                    </Typography>
-                  </Grid>
-
-                  <Grid item xs={4}> {/* Changed size prop */}
-                    <Typography variant="body2" color="textSecondary">
-                      Delivery Fee
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}> {/* Changed size prop */}
-                    <Typography variant="body2">
-                      {selectedOrder.financialDetails?.deliveryFee
-                        ? `${selectedOrder.financialDetails.deliveryFee} MAD`
-                        : "Not specified"}
-                    </Typography>
-                  </Grid>
-
-                  <Grid item xs={4}> {/* Changed size prop */}
-                    <Typography variant="body2" color="textSecondary">
-                      Total
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}> {/* Changed size prop */}
-                    <Typography variant="body2">
-                      {selectedOrder.financialDetails?.total
-                        ? `${selectedOrder.financialDetails.total} MAD`
-                        : "Not specified"}
-                    </Typography>
-                  </Grid>
-
-                  <Grid item xs={4}> {/* Changed size prop */}
-                    <Typography variant="body2" color="textSecondary">
-                      Payment Status
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}> {/* Changed size prop */}
-                    <Chip
-                      label={
-                        selectedOrder.financialDetails?.isPaid
-                          ? "Paid"
-                          : "Unpaid"
-                      }
-                      color={
-                        selectedOrder.financialDetails?.isPaid
-                          ? "success"
-                          : "default"
-                      }
-                      size="small"
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-
-              <Grid item xs={12} md={6}> {/* Changed size prop */}
-                <Typography variant="subtitle1">Order Information</Typography>
-                <Divider sx={{ mb: 2 }} />
-
-                <Grid container spacing={1}>
-                  <Grid item xs={4}> {/* Changed size prop */}
-                    <Typography variant="body2" color="textSecondary">
-                      Order ID
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}> {/* Changed size prop */}
-                    <Typography
-                      variant="body2"
-                      sx={{ fontFamily: "monospace" }}
-                    >
-                      {selectedOrder._id}
-                    </Typography>
-                  </Grid>
-
-                  <Grid item xs={4}> {/* Changed size prop */}
-                    <Typography variant="body2" color="textSecondary">
-                      Order Date
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}> {/* Changed size prop */}
-                    <Typography variant="body2">
-                      {formatDate(selectedOrder.createdAt)}
-                    </Typography>
-                  </Grid>
-
-                  <Grid item xs={4}> {/* Changed size prop */}
-                    <Typography variant="body2" color="textSecondary">
-                      Status
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}> {/* Changed size prop */}
-                    <StatusChip status={selectedOrder.status} />
-                  </Grid>
-
-                  <Grid item xs={4}> {/* Changed size prop */}
-                    <Typography variant="body2" color="textSecondary">
-                      Assigned To
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}> {/* Changed size prop */}
-                    <Typography variant="body2">
-                      {selectedOrder.deliveryDetails?.assignedTo
-                        ? deliveryMenList.find(dm => dm._id === (selectedOrder.deliveryDetails.assignedTo._id || selectedOrder.deliveryDetails.assignedTo))?.name || 'N/A'
-                        : "Not assigned"}
-                    </Typography>
-                  </Grid>
-                </Grid>
-
-                <Typography variant="subtitle1" sx={{ mt: 3 }}>
-                  Order Content
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-
-                <Paper
-                  variant="outlined"
-                  sx={{ p: 2, bgcolor: "background.default" }}
-                >
-                  <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
-                    {selectedOrder.orderContent}
-                  </Typography>
-                </Paper>
-
-                <Typography variant="subtitle1" sx={{ mt: 3 }}>
-                  Status History & Notes
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-
-                {selectedOrder.statusHistory &&
-                selectedOrder.statusHistory.length > 0 ? (
-                  <Box sx={{ maxHeight: 200, overflowY: "auto" }}>
-                    {selectedOrder.statusHistory.map((entry, index) => (
-                      <Box
-                        key={index}
-                        sx={{
-                          mb: 2,
-                          pb: 2,
-                          borderBottom:
-                            index < selectedOrder.statusHistory.length - 1
-                              ? "1px solid rgba(0, 0, 0, 0.12)"
-                              : "none",
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            mb: 1,
-                          }}
-                        >
-                          <StatusChip status={entry.status} />
-                          <Typography variant="caption" color="textSecondary">
-                            {formatDate(entry.timestamp)}
-                          </Typography>
-                        </Box>
-                        {entry.note && (
-                          <Typography variant="body2" sx={{ pl:1, borderLeft: '3px solid', borderColor: theme.palette.divider, fontStyle: 'italic' }}>
-                            Note: {entry.note}
-                          </Typography>
-                        )}
-                      </Box>
-                    ))}
-                  </Box>
-                ) : (
-                  <Typography variant="body2" color="textSecondary">
-                    No status history available
-                  </Typography>
-                )}
-              </Grid>
-            </Grid>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setViewDialogOpen(false)}>Close</Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              setViewDialogOpen(false);
-              handleEditOrder(selectedOrder);
-            }}
-          >
-            Edit Order
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Dialogue d'édition de commande */}
-      <Dialog
+      {/* Edit Order Dialog */}
+      <EditOrderDialog
         open={editDialogOpen}
         onClose={() => setEditDialogOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Update Order Status</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}> {/* Changed size prop */}
-              <TextField
-                select
-                fullWidth
-                label="Status"
-                value={editFormData.status}
-                onChange={(e) =>
-                  setEditFormData({ ...editFormData, status: e.target.value })
-                }
-                required
-              >
-                <MenuItem value={OrderStatus.PENDING}>Pending</MenuItem>
-                <MenuItem value={OrderStatus.CONFIRMED}>Confirmed</MenuItem>
-                <MenuItem value={OrderStatus.DELIVERED}>Delivered</MenuItem>
-                <MenuItem value={OrderStatus.CANCELLED}>Cancelled</MenuItem>
-              </TextField>
-            </Grid>
+        order={selectedOrder}
+        editFormData={editFormData}
+        handleEditFormChange={handleEditFormChange}
+        deliveryMenList={deliveryMenList}
+        onUpdate={handleUpdateOrder}
+      />
 
-            <Grid item xs={12}> {/* Changed size prop */}
-              <TextField
-                select
-                fullWidth
-                label="Assign Delivery Man"
-                value={editFormData.deliveryMan}
-                onChange={(e) =>
-                  setEditFormData({ ...editFormData, deliveryMan: e.target.value })
-                }
-                helperText="Select a delivery person or leave blank to unassign."
-                sx={{ mb: 2 }}
-              >
-                <MenuItem value="">
-                  <em>None (Unassign)</em>
-                </MenuItem>
-                {deliveryMenList.length > 0 ? (
-                  deliveryMenList.map((deliveryMan) => (
-                    <MenuItem key={deliveryMan._id} value={deliveryMan._id}>
-                      {deliveryMan.name} ({deliveryMan.email})
-                    </MenuItem>
-                  ))
-                ) : (
-                  <MenuItem disabled>Loading delivery men...</MenuItem>
-                )}
-              </TextField>
-            </Grid>
-
-            <Grid item xs={12}> {/* Changed size prop */}
-              <TextField
-                fullWidth
-                label="Notes"
-                value={editFormData.note}
-                onChange={(e) =>
-                  setEditFormData({ ...editFormData, note: e.target.value })
-                }
-                multiline
-                rows={3}
-                placeholder="Optional notes for the order"
-              />
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
-          <Button
-            onClick={handleUpdateOrder}
-            variant="contained"
-            color="primary"
-            disabled={loading}
-          >
-            {loading ? <CircularProgress size={24} /> : "Update Order"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Dialogue de suppression de commande */}
-      <Dialog
+      {/* Delete Order Dialog */}
+      <DeleteOrderDialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this order? This action cannot be
-            undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-          <Button
-            onClick={handleConfirmDelete}
-            variant="contained"
-            color="error"
-            disabled={loading}
-          >
-            {loading ? <CircularProgress size={24} /> : "Delete Order"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onConfirm={handleConfirmDelete}
+        order={selectedOrder}
+      />
 
-      {/* Snackbar pour les notifications */}
+      {/* Snackbar for notifications */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
