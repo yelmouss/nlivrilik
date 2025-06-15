@@ -252,7 +252,7 @@ export default function AdminOrders() {
       status: order.status,
       // Ensure deliveryMan is an ID or empty string
       deliveryMan: order.deliveryDetails?.assignedTo?._id || order.deliveryDetails?.assignedTo || "",
-      note: "",
+      note: "", // Clear note on new edit
     });
     setEditDialogOpen(true);
   };
@@ -559,39 +559,39 @@ export default function AdminOrders() {
         <DialogContent>
           {selectedOrder && (
             <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid size xs={12} md={6}>
+              <Grid item xs={12} md={6}> {/* Changed size prop */}
                 <Typography variant="subtitle1">Contact Information</Typography>
                 <Divider sx={{ mb: 2 }} />
 
                 <Grid container spacing={1}>
-                  <Grid size xs={4}>
+                  <Grid item xs={4}> {/* Changed size prop */}
                     <Typography variant="body2" color="textSecondary">
                       Name
                     </Typography>
                   </Grid>
-                  <Grid size xs={8}>
+                  <Grid item xs={8}> {/* Changed size prop */}
                     <Typography variant="body2">
                       {selectedOrder.contactInfo.fullName}
                     </Typography>
                   </Grid>
 
-                  <Grid size xs={4}>
+                  <Grid item xs={4}> {/* Changed size prop */}
                     <Typography variant="body2" color="textSecondary">
                       Email
                     </Typography>
                   </Grid>
-                  <Grid size xs={8}>
+                  <Grid item xs={8}> {/* Changed size prop */}
                     <Typography variant="body2">
                       {selectedOrder.contactInfo.email}
                     </Typography>
                   </Grid>
 
-                  <Grid size xs={4}>
+                  <Grid item xs={4}> {/* Changed size prop */}
                     <Typography variant="body2" color="textSecondary">
                       Phone Number
                     </Typography>
                   </Grid>
-                  <Grid size xs={8}>
+                  <Grid item xs={8}> {/* Changed size prop */}
                     <Typography variant="body2">
                       {selectedOrder.contactInfo.phoneNumber}
                     </Typography>
@@ -628,12 +628,12 @@ export default function AdminOrders() {
                 <Divider sx={{ mb: 2 }} />
 
                 <Grid container spacing={1}>
-                  <Grid size xs={4}>
+                  <Grid item xs={4}> {/* Changed size prop */}
                     <Typography variant="body2" color="textSecondary">
                       Payment Method
                     </Typography>
                   </Grid>
-                  <Grid size xs={8}>
+                  <Grid item xs={8}> {/* Changed size prop */}
                     <Typography variant="body2">
                       {selectedOrder.financialDetails?.paymentMethod
                         ? `paymentMethod_${selectedOrder.financialDetails.paymentMethod}`
@@ -641,12 +641,12 @@ export default function AdminOrders() {
                     </Typography>
                   </Grid>
 
-                  <Grid size xs={4}>
+                  <Grid item xs={4}> {/* Changed size prop */}
                     <Typography variant="body2" color="textSecondary">
                       Delivery Fee
                     </Typography>
                   </Grid>
-                  <Grid size xs={8}>
+                  <Grid item xs={8}> {/* Changed size prop */}
                     <Typography variant="body2">
                       {selectedOrder.financialDetails?.deliveryFee
                         ? `${selectedOrder.financialDetails.deliveryFee} MAD`
@@ -654,12 +654,12 @@ export default function AdminOrders() {
                     </Typography>
                   </Grid>
 
-                  <Grid size xs={4}>
+                  <Grid item xs={4}> {/* Changed size prop */}
                     <Typography variant="body2" color="textSecondary">
                       Total
                     </Typography>
                   </Grid>
-                  <Grid size xs={8}>
+                  <Grid item xs={8}> {/* Changed size prop */}
                     <Typography variant="body2">
                       {selectedOrder.financialDetails?.total
                         ? `${selectedOrder.financialDetails.total} MAD`
@@ -667,12 +667,12 @@ export default function AdminOrders() {
                     </Typography>
                   </Grid>
 
-                  <Grid size xs={4}>
+                  <Grid item xs={4}> {/* Changed size prop */}
                     <Typography variant="body2" color="textSecondary">
                       Payment Status
                     </Typography>
                   </Grid>
-                  <Grid size xs={8}>
+                  <Grid item xs={8}> {/* Changed size prop */}
                     <Chip
                       label={
                         selectedOrder.financialDetails?.isPaid
@@ -690,17 +690,17 @@ export default function AdminOrders() {
                 </Grid>
               </Grid>
 
-              <Grid size xs={12} md={6}>
+              <Grid item xs={12} md={6}> {/* Changed size prop */}
                 <Typography variant="subtitle1">Order Information</Typography>
                 <Divider sx={{ mb: 2 }} />
 
                 <Grid container spacing={1}>
-                  <Grid size xs={4}>
+                  <Grid item xs={4}> {/* Changed size prop */
                     <Typography variant="body2" color="textSecondary">
                       Order ID
                     </Typography>
                   </Grid>
-                  <Grid size xs={8}>
+                  <Grid item xs={8}> {/* Changed size prop */}
                     <Typography
                       variant="body2"
                       sx={{ fontFamily: "monospace" }}
@@ -709,35 +709,35 @@ export default function AdminOrders() {
                     </Typography>
                   </Grid>
 
-                  <Grid size xs={4}>
+                  <Grid item xs={4}> {/* Changed size prop */}
                     <Typography variant="body2" color="textSecondary">
                       Order Date
                     </Typography>
                   </Grid>
-                  <Grid size xs={8}>
+                  <Grid item xs={8}> {/* Changed size prop */}
                     <Typography variant="body2">
                       {formatDate(selectedOrder.createdAt)}
                     </Typography>
                   </Grid>
 
-                  <Grid size xs={4}>
+                  <Grid item xs={4}> {/* Changed size prop */}
                     <Typography variant="body2" color="textSecondary">
                       Status
                     </Typography>
                   </Grid>
-                  <Grid size xs={8}>
+                  <Grid item xs={8}> {/* Changed size prop */}
                     <StatusChip status={selectedOrder.status} />
                   </Grid>
 
-                  <Grid size xs={4}>
+                  <Grid item xs={4}> {/* Changed size prop */}
                     <Typography variant="body2" color="textSecondary">
                       Assigned To
                     </Typography>
                   </Grid>
-                  <Grid size xs={8}>
+                  <Grid item xs={8}> {/* Changed size prop */}
                     <Typography variant="body2">
                       {selectedOrder.deliveryDetails?.assignedTo
-                        ? selectedOrder.deliveryDetails.assignedTo
+                        ? deliveryMenList.find(dm => dm._id === (selectedOrder.deliveryDetails.assignedTo._id || selectedOrder.deliveryDetails.assignedTo))?.name || 'N/A'
                         : "Not assigned"}
                     </Typography>
                   </Grid>
@@ -758,7 +758,7 @@ export default function AdminOrders() {
                 </Paper>
 
                 <Typography variant="subtitle1" sx={{ mt: 3 }}>
-                  Status History
+                  Status History & Notes
                 </Typography>
                 <Divider sx={{ mb: 2 }} />
 
@@ -791,7 +791,9 @@ export default function AdminOrders() {
                           </Typography>
                         </Box>
                         {entry.note && (
-                          <Typography variant="body2">{entry.note}</Typography>
+                          <Typography variant="body2" sx={{ pl:1, borderLeft: '3px solid', borderColor: theme.palette.divider, fontStyle: 'italic' }}>
+                            Note: {entry.note}
+                          </Typography>
                         )}
                       </Box>
                     ))}
@@ -830,7 +832,7 @@ export default function AdminOrders() {
         <DialogTitle>Update Order Status</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid size xs={12}>
+            <Grid item xs={12}> {/* Changed size prop */}
               <TextField
                 select
                 fullWidth
@@ -848,7 +850,7 @@ export default function AdminOrders() {
               </TextField>
             </Grid>
 
-            <Grid size xs={12}>
+            <Grid item xs={12}> {/* Changed size prop */}
               <TextField
                 select
                 fullWidth
@@ -875,7 +877,7 @@ export default function AdminOrders() {
               </TextField>
             </Grid>
 
-            <Grid size xs={12}>
+            <Grid item xs={12}> {/* Changed size prop */}
               <TextField
                 fullWidth
                 label="Notes"
