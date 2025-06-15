@@ -7,6 +7,7 @@ import { Container, TextField, Button, Typography, Box, Alert, Paper, CircularPr
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
+import Wave from 'react-wavify'
 
 export default function SignUp() {
   const router = useRouter()
@@ -97,6 +98,7 @@ export default function SignUp() {
   }
 
   return (
+    <Box>
     <Container 
       component="main" 
       maxWidth="xs" 
@@ -209,5 +211,35 @@ export default function SignUp() {
         </Box>
       </Paper>
     </Container>
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          width: "100%",
+          height: "100px",
+          zIndex: -1,
+        }}
+      >
+        <Wave
+          fill="url(#waveGradient)"
+          paused={false}
+          options={{
+            height: 5,
+            amplitude: 20,
+            speed: 0.15,
+            points: 4,
+          }}
+        >
+          <defs>
+            <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor={theme.palette.custom.lightTeal} />
+              <stop offset="50%" stopColor={theme.palette.custom.mediumTeal} />
+              <stop offset="100%" stopColor={theme.palette.custom.darkTeal} />
+            </linearGradient>
+          </defs>
+        </Wave>
+      </Box>
+      </Box>
   )
 }

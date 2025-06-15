@@ -261,14 +261,7 @@ export default function AdminLayout({ children }) {
             ...theme.mixins.toolbar, // Ensure drawer header aligns with AppBar
           }}
         >
-          <IconButton
-            onClick={handleDrawerToggle}
-            sx={{
-              color: theme.palette.custom?.lightYellow || theme.palette.common.white,
-            }}
-          >
-            <ChevronLeftIcon />
-          </IconButton>
+        
         </Toolbar>
         <Divider
           sx={{
