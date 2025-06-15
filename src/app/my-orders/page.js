@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 
 // Composant pour afficher les détails d'une commande
 import OrderCard from '@/components/OrderCard';
+import AutoDeliveryRating from '@/components/ratings/AutoDeliveryRating';
 
 export default function MyOrdersPage() {
   const { data: session, status } = useSession();
@@ -147,14 +148,24 @@ export default function MyOrdersPage() {
             {t('placeOrder')}
           </Button>
         </Paper>
-      ) : (
-        <Box>
+      ) : (        <Box>
           {orders.map((order) => (
-            <OrderCard 
-              key={order._id} 
-              order={order} 
-              onStatusChange={handleStatusChange}
-            />
+            <Box key={order._id}>
+              <OrderCard 
+                order={order} 
+                onStatusChange={handleStatusChange}
+              />
+              {/* Système d'évaluation automatique pour les commandes livrées */}
+              <AutoDeliveryRating
+                orderId={order._id}
+                onRatingCompleted={(rating) => {
+                  setSnackbarMessage('Merci pour votre évaluation !');
+                  setSnackbarSeverity('success');
+                  setSnackbarOpen(true);
+                  fetchOrders(); // Rafraîchir les commandes
+                }}
+              />
+            </Box>
           ))}
         </Box>
       )}

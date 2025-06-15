@@ -1,1 +1,35 @@
 @import "tailwindcss";
+
+/* Styles pour assurer un défilement correct sur tous les appareils */
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Style pour les appareils desktop pour forcer le défilement */
+@media (min-width: 768px) {
+  html {
+    overflow-y: auto;
+  }
+  
+  body {
+    overflow-y: auto;
+  }
+}
+
+/* Style spécifique pour les layouts de delivery */
+.delivery-layout {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.delivery-main-content {
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}

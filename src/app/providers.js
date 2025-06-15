@@ -11,7 +11,7 @@ import { usePathname } from 'next/navigation';
 
 export function Providers({ children }) {
   const pathname = usePathname();
-  const isAdminPage = pathname.startsWith('/admin');
+  const isAdminPage = pathname.startsWith('/admin') || pathname.startsWith('/delivery');
 
   return (
     <SessionProvider>

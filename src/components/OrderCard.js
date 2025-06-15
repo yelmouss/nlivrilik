@@ -28,8 +28,11 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import StarIcon from "@mui/icons-material/Star";
 
 import OrderStatus from "@/models/OrderStatus";
+import DeliveryRatingDialog from "@/components/ratings/DeliveryRatingDialog";
+
 // Fonction pour formater la date
 const formatDate = (dateString) => {
   const options = {
@@ -48,6 +51,7 @@ export default function OrderCard({ order, onStatusChange }) {
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [ratingDialogOpen, setRatingDialogOpen] = useState(false);
 
   // Gestionnaire pour le changement d'état de la commande
   const handleStatusChange = async (newStatus) => {
@@ -75,6 +79,20 @@ export default function OrderCard({ order, onStatusChange }) {
   // Gestionnaire pour la fermeture du dialogue de confirmation d'annulation
   const handleCancelDialogClose = () => {
     setCancelDialogOpen(false);
+  };
+
+  // Gestionnaires pour le dialogue d'évaluation
+  const handleRatingDialogOpen = () => {
+    setRatingDialogOpen(true);
+  };
+
+  const handleRatingDialogClose = () => {
+    setRatingDialogOpen(false);
+  };
+
+  const handleRatingSubmitted = (ratingData) => {
+    // Optionnel: mettre à jour l'état local ou déclencher un refresh
+    console.log('Évaluation soumise:', ratingData);
   };
 
   // Rendu du chip de statut avec la couleur correspondante
