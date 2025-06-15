@@ -548,9 +548,8 @@ export default function DeliveryHistoryPage() {
                         color: 'success.contrastText',
                         p: 2, 
                         borderRadius: 1,
-                        fontStyle: 'italic'
-                      }}>
-                        "{selectedOrder.rating.comment}"
+                        fontStyle: 'italic'                      }}>
+                        &ldquo;{selectedOrder.rating.comment}&rdquo;
                       </Typography>
                     )}
                   </Box>

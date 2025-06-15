@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -26,17 +26,9 @@ export default function DeliveryRatingDialog({
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [existingRating, setExistingRating] = useState(null);
-  const [checkingExisting, setCheckingExisting] = useState(true);
+  const [error, setError] = useState("");  const [existingRating, setExistingRating] = useState(null);  const [checkingExisting, setCheckingExisting] = useState(true);
 
-  useEffect(() => {
-    if (open && order) {
-      checkExistingRating();
-    }
-  }, [open, order]);
-
-  const checkExistingRating = async () => {
+  const checkExistingRating = useCallback(async () => {
     try {
       setCheckingExisting(true);
       const response = await fetch(`/api/ratings?orderId=${order._id}`);
@@ -52,7 +44,13 @@ export default function DeliveryRatingDialog({
     } finally {
       setCheckingExisting(false);
     }
-  };
+  }, [order._id]);
+
+  useEffect(() => {
+    if (open && order) {
+      checkExistingRating();
+    }
+  }, [open, order, checkExistingRating]);
 
   const handleSubmit = async () => {
     if (rating === 0) {
@@ -143,9 +141,8 @@ export default function DeliveryRatingDialog({
                   p: 2, 
                   bgcolor: 'grey.50', 
                   borderRadius: 1,
-                  fontStyle: 'italic' 
-                }}>
-                  "{existingRating.comment}"
+                  fontStyle: 'italic'                }}>
+                  &ldquo;{existingRating.comment}&rdquo;
                 </Typography>
               </Box>
             )}
@@ -222,7 +219,7 @@ export default function DeliveryRatingDialog({
             disabled={loading || rating === 0}
             startIcon={loading ? <CircularProgress size={20} /> : null}
           >
-            Envoyer l'évaluation
+            Envoyer l&apos;évaluation
           </Button>
         )}
       </DialogActions>

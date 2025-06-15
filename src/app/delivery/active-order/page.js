@@ -270,9 +270,8 @@ export default function ActiveOrderPage() {
                   <LocalShipping sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
                   <Typography variant="h6" color="text.secondary">
                     Aucune commande active
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Vous n'avez pas de commande en cours de livraison.
+                  </Typography>                  <Typography variant="body2" color="text.secondary">
+                    Vous n&apos;avez pas de commande en cours de livraison.
                   </Typography>
                 </Box>
               </CardContent>

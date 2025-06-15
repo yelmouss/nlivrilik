@@ -200,9 +200,8 @@ export default function AvailableOrdersPage() {
       <Typography variant="h4" component="h1" gutterBottom>
         Commandes Disponibles
       </Typography>
-      
-      <Typography variant="body1" color="text.secondary" paragraph>
-        Voici les commandes confirmées par l'administration et disponibles pour la livraison.
+        <Typography variant="body1" color="text.secondary" paragraph>
+        Voici les commandes confirmées par l&apos;administration et disponibles pour la livraison.
       </Typography>
 
       {error && (

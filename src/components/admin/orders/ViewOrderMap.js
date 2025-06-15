@@ -18,11 +18,14 @@ export default function ViewOrderMap({ coordinates = [0, 0], address = "" }) {
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [map, setMap] = useState(null);
-  const [mapLoaded, setMapLoaded] = useState(false); // Effet pour charger la carte à l'exécution côté client uniquement
+  const [map, setMap] = useState(null);  const [mapLoaded, setMapLoaded] = useState(false); 
+  
+  // Effet pour charger la carte à l'exécution côté client uniquement
   useEffect(() => {
     // Ne pas réinitialiser si la carte existe déjà ou si le conteneur n'est pas prêt ou si déjà en cours d'initialisation
-    if (mapLoaded || !mapRef.current || map || initializingRef.current) return; // Fonction asynchrone pour initialiser la carte
+    if (mapLoaded || !mapRef.current || map || initializingRef.current) return; 
+    
+    // Fonction asynchrone pour initialiser la carte
     async function initializeMap() {
       try {
         initializingRef.current = true;
@@ -55,7 +58,7 @@ export default function ViewOrderMap({ coordinates = [0, 0], address = "" }) {
         // Import de la fonction de projection
         const { fromLonLat } = await import("ol/proj");
 
-        // Vérifier que les coordonnées sont valides
+        // Vérifier que les coordonnées sont valides (utiliser les coordonnées actuelles)
         const validCoordinates =
           coordinates &&
           coordinates.length === 2 &&
@@ -119,7 +122,9 @@ export default function ViewOrderMap({ coordinates = [0, 0], address = "" }) {
     }
 
     // Initialiser la carte
-    initializeMap(); // Nettoyer la carte lors du démontage du composant
+    initializeMap(); 
+    
+    // Nettoyer la carte lors du démontage du composant
     return () => {
       if (map) {
         map.setTarget(null);
@@ -128,8 +133,7 @@ export default function ViewOrderMap({ coordinates = [0, 0], address = "" }) {
         initializingRef.current = false;
       }
     };
-  }, []); // Enlever mapLoaded des dépendances pour éviter les réinitialisations
-  // Effet pour mettre à jour le marqueur quand les coordonnées changent
+  }, [coordinates, map, mapLoaded]); // Inclure les dépendances nécessaires// Effet pour mettre à jour le marqueur quand les coordonnées changent
   useEffect(() => {
     if (!map || !mapLoaded || loading) return;
 
@@ -187,7 +191,7 @@ export default function ViewOrderMap({ coordinates = [0, 0], address = "" }) {
       }
     }
     updateMarker();
-  }, [coordinates, map, mapLoaded, loading]); // Ajouter loading comme dépendance
+  }, [coordinates, map, mapLoaded, loading]);
 
   return (
     <Box

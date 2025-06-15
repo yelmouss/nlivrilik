@@ -207,9 +207,8 @@ export default function DeliveryDashboard() {
               <Card>
                 <CardContent>
                   <Box display="flex" alignItems="center" justifyContent="space-between">
-                    <Box>
-                      <Typography color="textSecondary" gutterBottom variant="body2">
-                        Livraisons aujourd'hui
+                    <Box>                      <Typography color="textSecondary" gutterBottom variant="body2">
+                        Livraisons aujourd&apos;hui
                       </Typography>
                       <Typography variant="h4">
                         {dashboardData.todayDeliveries}
@@ -332,9 +331,8 @@ export default function DeliveryDashboard() {
                   <LocalShipping sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
                   <Typography variant="h6" color="text.secondary" gutterBottom>
                     Aucune commande active
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" align="center" mb={3}>
-                    Vous n'avez actuellement aucune commande en cours de livraison.
+                  </Typography>                  <Typography variant="body2" color="text.secondary" align="center" mb={3}>
+                    Vous n&apos;avez actuellement aucune commande en cours de livraison.
                   </Typography>
                   <Button
                     variant="contained"
@@ -390,7 +388,7 @@ export default function DeliveryDashboard() {
                       href="/delivery/history"
                       fullWidth
                     >
-                      Voir l'historique
+                      Voir l&apos;historique
                     </Button>
                   </Box>
                 </CardContent>

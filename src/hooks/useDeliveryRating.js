@@ -1,17 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export function useDeliveryRatingCheck(orderId) {
   const [shouldShowRating, setShouldShowRating] = useState(false);
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (orderId) {
-      checkOrderRatingStatus();
-    }
-  }, [orderId]);
-
-  const checkOrderRatingStatus = async () => {
+  const checkOrderRatingStatus = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -35,7 +29,13 @@ export function useDeliveryRatingCheck(orderId) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [orderId]);
+
+  useEffect(() => {
+    if (orderId) {
+      checkOrderRatingStatus();
+    }
+  }, [orderId, checkOrderRatingStatus]);
 
   const markRatingShown = () => {
     setShouldShowRating(false);
