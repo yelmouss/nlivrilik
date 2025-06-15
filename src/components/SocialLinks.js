@@ -39,8 +39,16 @@ const socialLinks = [
 const SocialLinks = () => {
 	const { scrollY } = useScroll();
 	// Disappear after scrolling 200px, fully gone by 400px
-	const opacity = useTransform(scrollY, [0, 200, 400], [1, 1, 0]);
-	const y = useTransform(scrollY, [0, 200, 400], [0, 0, -200]); // Move up as it fades
+	const opacity = useTransform(scrollY, [0, 300, 500], [1, 1, 0]);
+	const y = useTransform(scrollY, [0, 300, 500], [0, 0, -50]); // Move up as it fades
+
+	// Debug scroll values
+	React.useEffect(() => {
+		const unsubscribe = scrollY.onChange((value) => {
+			console.log("SocialLinks scrollY:", value);
+		});
+		return unsubscribe;
+	}, [scrollY]);
 
 	return (
 		<motion.div

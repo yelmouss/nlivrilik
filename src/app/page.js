@@ -1,6 +1,5 @@
 "use client";
 import * as React from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { useTranslations } from "next-intl";
@@ -16,8 +15,6 @@ import SocialLinks from "../components/SocialLinks"; // Import the new component
 
 export default function Home() {
   const t = useTranslations("HomePage");
-  const { scrollYProgress } = useScroll();
-  const scale = useTransform(scrollYProgress, [0, 0.3], [1, 1.5]);
 
   return (
     <>
@@ -36,7 +33,7 @@ export default function Home() {
           minHeight: "calc(100vh - 64px)",
         }}
       >
-        <HeroSectionContent t={t} scale={scale} />
+        <HeroSectionContent t={t} />
       </CurvedSection>
 
       {/* Main Content Area */}

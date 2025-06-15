@@ -12,21 +12,24 @@ import doubleQuotesIcon from "../../public/double-quotes.svg";
 import doubleQuotesEndIcon from "../../public/double-quotes-end.svg";
 
 const HeroSectionContent = ({ t }) => {
-  // Utiliser useScroll sans target pour suivre le scroll global
-  const { scrollY } = useScroll();
-  const scale = useTransform(scrollY, [0, 300], [0.8, 1.2]);
-  const opacity = useTransform(scrollY, [0, 200], [1, 0.8]);
+  const containerRef = React.useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
+  const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1.2]);
 
   // Debug logging
   React.useEffect(() => {
-    const unsubscribeScrollY = scrollY.onChange((value) => {
-      console.log("scrollY:", value, "scale:", scale.get());
+    const unsubscribe = scrollYProgress.onChange((value) => {
+      console.log("Hero scrollYProgress:", value, "scale:", scale.get());
     });
-    return unsubscribeScrollY;
-  }, [scrollY, scale]);
+    return unsubscribe;
+  }, [scrollYProgress, scale]);
 
   return (
     <Container
+      ref={containerRef}
       maxWidth="md"
       sx={{
         display: "flex",
@@ -45,7 +48,7 @@ const HeroSectionContent = ({ t }) => {
         }}
       >
         <motion.div
-          style={{ scale, opacity }}
+          style={{ scale }}
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -88,44 +91,24 @@ const HeroSectionContent = ({ t }) => {
           </Box>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-        >
-          <Box sx={{ width: "100%", maxWidth: 400, margin: "0 auto", my: 0 }}>
-            <Lottie animationData={animationData} loop={true} />
-          </Box>
-        </motion.div>
+        <Box sx={{ width: "100%", maxWidth: 400, margin: "0 auto", my: 0 }}>
+          <Lottie animationData={animationData} loop={true} />
+        </Box>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-        >
-          <Typography variant="h5" component="p" sx={{ mb: 4 }}>
-            {t("heroSubtitle")}
-          </Typography>
-        </motion.div>
+        <Typography variant="h5" component="p" sx={{ mb: 4 }}>
+          {t("heroSubtitle")}
+        </Typography>
       </Box>
 
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.9 }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+      <Button
+        variant="contained"
+        color="secondary"
+        size="large"
+        href="/order"
+        sx={{ mb: 2 }}
       >
-        <Button
-          variant="contained"
-          color="secondary"
-          size="large"
-          href="/order"
-          sx={{ mb: 2 }}
-        >
-          {t("orderNowButton")}
-        </Button>
-      </motion.div>
+        {t("orderNowButton")}
+      </Button>
     </Container>
   );
 };

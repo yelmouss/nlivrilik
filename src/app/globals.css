@@ -1,14 +1,38 @@
 @import "tailwindcss";
 
 /* Styles pour assurer un défilement correct sur tous les appareils */
-html, body {
+html {
   height: 100%;
   overflow-x: hidden;
+  /* Optimisation pour les animations */
+  scroll-behavior: smooth;
 }
 
 body {
+  height: auto;
+  min-height: 100%;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+  /* Assurer que le body peut défiler pour le scroll tracking */
+  position: relative;
+}
+
+/* Optimisation des performances pour Framer Motion */
+* {
+  box-sizing: border-box;
+}
+
+/* Améliorations pour les animations */
+[data-framer-motion] {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Force le scroll container pour Framer Motion */
+#__next {
+  min-height: 100vh;
 }
 
 /* Style pour les appareils desktop pour forcer le défilement */
