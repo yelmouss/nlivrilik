@@ -1,34 +1,35 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 /**
  * Configuration du transport d'emails
  * @returns {nodemailer.Transporter} Transporter pour envoyer des emails
  */
-export function createEmailTransporter() {  return nodemailer.createTransport({
+export function createEmailTransporter() {
+  return nodemailer.createTransport({
     host: process.env.EMAIL_SERVER_HOST,
     port: parseInt(process.env.EMAIL_SERVER_PORT),
     auth: {
       user: process.env.EMAIL_SERVER_USER,
-      pass: process.env.EMAIL_SERVER_PASSWORD
+      pass: process.env.EMAIL_SERVER_PASSWORD,
     },
-    secure: process.env.EMAIL_SERVER_PORT === '465', // Activer SSL pour le port 465
+    secure: process.env.EMAIL_SERVER_PORT === "465", // Activer SSL pour le port 465
     tls: {
       // Ignorer les erreurs de certificat en développement
-      rejectUnauthorized: process.env.NODE_ENV === 'production'
-    }
+      rejectUnauthorized: process.env.NODE_ENV === "production",
+    },
   });
 }
 
 // Liste des emails administrateurs qui recevront toutes les notifications
-export const ADMIN_EMAILS = process.env.ADMIN_EMAILS ? 
-  process.env.ADMIN_EMAILS.split(',').map(email => email.trim()) : 
-  ['admin@nlivrilik.com', 'support@nlivrilik.com'];
-  // Ajoutez d'autres emails d'administrateurs si nécessaire
+export const ADMIN_EMAILS =
+  process.env.ADMIN_EMAILS &&
+  process.env.ADMIN_EMAILS.split(",").map((email) => email.trim());
+// Ajoutez d'autres emails d'administrateurs si nécessaire
 
 // Liste des emails des livreurs qui recevront les notifications de commande pertinentes
-export const DELIVERY_PERSONNEL_EMAILS = process.env.DELIVERY_EMAILS ?
-  process.env.DELIVERY_EMAILS.split(',').map(email => email.trim()) :
-  []; // Par défaut, une liste vide si non défini
+export const DELIVERY_PERSONNEL_EMAILS = process.env.DELIVERY_EMAILS
+  ? process.env.DELIVERY_EMAILS.split(",").map((email) => email.trim())
+  : []; // Par défaut, une liste vide si non défini
 
 /**
  * Envoie un email avec un template HTML
@@ -39,44 +40,63 @@ export const DELIVERY_PERSONNEL_EMAILS = process.env.DELIVERY_EMAILS ?
  * @param {string} [options.from] - Expéditeur (utilise EMAIL_FROM par défaut)
  * @returns {Promise<Object>} Résultat de l'envoi
  */
-export async function sendEmail({ to, subject, html, from = process.env.EMAIL_FROM }) {
+export async function sendEmail({
+  to,
+  subject,
+  html,
+  from = process.env.EMAIL_FROM,
+}) {
   try {
-    console.log(`Preparing to send email to ${Array.isArray(to) ? to.join(', ') : to} with subject: ${subject}`);
-    console.log(`Email server config: ${process.env.EMAIL_SERVER_HOST}:${process.env.EMAIL_SERVER_PORT}`);
-    
+    console.log(
+      `Preparing to send email to ${
+        Array.isArray(to) ? to.join(", ") : to
+      } with subject: ${subject}`
+    );
+    console.log(
+      `Email server config: ${process.env.EMAIL_SERVER_HOST}:${process.env.EMAIL_SERVER_PORT}`
+    );
+
     // Vérifier les paramètres requis
     if (!to || !subject || !html) {
-      throw new Error('Missing required email parameters: to, subject, or html');
+      throw new Error(
+        "Missing required email parameters: to, subject, or html"
+      );
     }
-    
+
     if (!process.env.EMAIL_SERVER_USER || !process.env.EMAIL_SERVER_PASSWORD) {
-      throw new Error('Missing email server credentials in environment variables');
+      throw new Error(
+        "Missing email server credentials in environment variables"
+      );
     }
-    
+
     const transport = createEmailTransporter();
-    console.log('Email transporter created successfully');
-    
+    console.log("Email transporter created successfully");
+
     // Objet de configuration de l'email
     const mailOptions = {
       from: from || `"NLIVRILIK" <${process.env.EMAIL_SERVER_USER}>`,
       to, // 'to' can be a string or an array of strings
       subject,
-      html
+      html,
     };
-    
-    console.log('Sending email with options:', {
+
+    console.log("Sending email with options:", {
       from: mailOptions.from,
       to: mailOptions.to, // Log the recipient(s)
-      subject: mailOptions.subject
+      subject: mailOptions.subject,
     });
-    
+
     const result = await transport.sendMail(mailOptions);
-    
-    console.log(`Email sent successfully to ${Array.isArray(to) ? to.join(', ') : to}. Message ID: ${result.messageId}`);
+
+    console.log(
+      `Email sent successfully to ${
+        Array.isArray(to) ? to.join(", ") : to
+      }. Message ID: ${result.messageId}`
+    );
     return { success: true, messageId: result.messageId };
   } catch (error) {
-    console.error('Error sending email:', error);
-    console.error('Error details:', error.stack);
+    console.error("Error sending email:", error);
+    console.error("Error details:", error.stack);
     return { success: false, error: error.message };
   }
 }
@@ -89,15 +109,19 @@ export async function sendEmail({ to, subject, html, from = process.env.EMAIL_FR
  * @param {string|Array} [options.additionalRecipients] - Destinataires supplémentaires
  * @returns {Promise<Object>} Résultat de l'envoi
  */
-export async function sendAdminNotification({ subject, html, additionalRecipients = [] }) {
+export async function sendAdminNotification({
+  subject,
+  html,
+  additionalRecipients = [],
+}) {
   let recipients = [...ADMIN_EMAILS];
-  
-  if (typeof additionalRecipients === 'string') {
+
+  if (typeof additionalRecipients === "string") {
     if (additionalRecipients) recipients.push(additionalRecipients);
   } else if (Array.isArray(additionalRecipients)) {
-    recipients = [...recipients, ...additionalRecipients.filter(r => r)];
+    recipients = [...recipients, ...additionalRecipients.filter((r) => r)];
   }
-  
+
   // Ensure no duplicates and all are valid emails if further validation is needed
   const uniqueRecipients = [...new Set(recipients)];
 
@@ -105,11 +129,11 @@ export async function sendAdminNotification({ subject, html, additionalRecipient
     console.log("No admin recipients configured for notification.");
     return { success: true, message: "No admin recipients." };
   }
-  
+
   return sendEmail({
     to: uniqueRecipients,
     subject,
-    html
+    html,
   });
 }
 
@@ -122,26 +146,32 @@ export async function sendAdminNotification({ subject, html, additionalRecipient
  * @param {string|Array} [options.additionalRecipients] - Destinataires supplémentaires (optionnel)
  * @returns {Promise<Object>} Résultat de l'envoi
  */
-export async function sendDeliveryNotification({ subject, html, additionalRecipients = [] }) {
+export async function sendDeliveryNotification({
+  subject,
+  html,
+  additionalRecipients = [],
+}) {
   let recipients = [...DELIVERY_PERSONNEL_EMAILS];
 
-  if (typeof additionalRecipients === 'string') {
+  if (typeof additionalRecipients === "string") {
     if (additionalRecipients) recipients.push(additionalRecipients);
   } else if (Array.isArray(additionalRecipients)) {
-    recipients = [...recipients, ...additionalRecipients.filter(r => r)];
+    recipients = [...recipients, ...additionalRecipients.filter((r) => r)];
   }
 
   const uniqueRecipients = [...new Set(recipients)];
 
   if (uniqueRecipients.length === 0) {
-    console.log("No delivery personnel recipients configured for notification.");
+    console.log(
+      "No delivery personnel recipients configured for notification."
+    );
     return { success: true, message: "No delivery personnel recipients." };
   }
 
   return sendEmail({
     to: uniqueRecipients,
     subject,
-    html
+    html,
   });
 }
 
@@ -162,32 +192,37 @@ export function generateEmailTemplate({
   details = [],
   buttonText,
   buttonUrl,
-  footerText = "© NLIVRILIK - Votre partenaire de livraison de confiance au Maroc."
+  footerText = "© NLIVRILIK - Votre partenaire de livraison de confiance au Maroc.",
 }) {
   const detailsHtml = details.length
     ? `
       <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
         <tbody>
-          ${details.map(({ label, value }) => `
+          ${details
+            .map(
+              ({ label, value }) => `
             <tr>
               <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; width: 40%;">${label}</td>
               <td style="padding: 10px; border-bottom: 1px solid #eee;">${value}</td>
             </tr>
-          `).join('')}
+          `
+            )
+            .join("")}
         </tbody>
       </table>
     `
-    : '';
+    : "";
 
-  const buttonHtml = buttonText && buttonUrl
-    ? `
+  const buttonHtml =
+    buttonText && buttonUrl
+      ? `
       <div style="text-align: center; margin: 30px 0;">
         <a href="${buttonUrl}" style="background-color: #4CAF50; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">
           ${buttonText}
         </a>
       </div>
     `
-    : '';
+      : "";
 
   return `
     <!DOCTYPE html>

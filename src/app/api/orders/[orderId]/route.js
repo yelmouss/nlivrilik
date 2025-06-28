@@ -4,10 +4,11 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import dbConnect from '@/lib/mongoose';
 import Order from '@/models/Order';
 
-export async function GET(request, { params }) {
+export async function GET(request, context) {
   try {
-    const { orderId } = params;
-    
+    const { params } = await context;
+    const { orderId } = await params;
+
     if (!orderId) {
       return NextResponse.json({ 
         success: false, 

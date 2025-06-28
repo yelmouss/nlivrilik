@@ -99,10 +99,12 @@
     "myOrders": "My Orders",
     "newOrder": "New Order",
     "noOrdersYet": "No orders yet",
-        "placeOrder": "Place Order",
+    "placeOrder": "Place Order",
     "placeYourFirstOrder": "Place your first order"
-  },  "Order": {
-      "orderDetails": "Details",
+  },
+  "Order": {
+    "searchAddressPlaceholder": "Search for an address",
+    "orderDetails": "Details",
     "showDetails": "Show Details",
     "createOrder": "Create Order",
     "placeOrder": "Place Order",
@@ -152,7 +154,8 @@
     "orderBeingProcessed": "Your order is being processed",
     "orderCompleted": "Your order has been delivered",
     "orderCancelled": "Your order has been cancelled",
-    "orderNumber": "Order Number",    "confirmCancelTitle": "Cancel Order",
+    "orderNumber": "Order Number",
+    "confirmCancelTitle": "Cancel Order",
     "confirmCancelMessage": "Are you sure you want to cancel this order?",
     "confirmCancel": "Confirm Cancellation",
     "confirmCancellation": "Confirm Cancellation",

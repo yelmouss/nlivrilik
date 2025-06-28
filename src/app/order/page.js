@@ -62,6 +62,7 @@ export default function OrderPage() {
     setFullName,
     setEmail,
     setPhoneNumber,
+    setAddress, // <-- Ajouté pour corriger ReferenceError
     setAdditionalAddressInfo,
     setError,
 
@@ -113,7 +114,7 @@ export default function OrderPage() {
             additionalAddressInfo={additionalAddressInfo}
             onLocationSelect={handleMapLocationSelect}
             onAdditionalInfoChange={setAdditionalAddressInfo}
-            onAddressChange={() => {}} // Read-only, géré par la carte
+            onAddressChange={setAddress}
           />
         );
       case 2:

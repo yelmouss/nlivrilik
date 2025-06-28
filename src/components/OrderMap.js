@@ -15,33 +15,24 @@ export default function OrderMap({ onLocationSelect, initialCoordinates = [0, 0]
   const mapRef = useRef(null);
   const theme = useTheme();
   const t = useTranslations('Order');
-  
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [map, setMap] = useState(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
-  
+  const markerSourceRef = useRef(null);
+  const initializedRef = useRef(false); // Empêche double init
+
   // Fonction pour récupérer l'adresse à partir des coordonnées (géocodage inverse)
   const fetchAddressFromCoordinates = useCallback(async (coordinates) => {
     try {
-      // Utilisation de l'API Nominatim d'OpenStreetMap pour le géocodage inverse
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lon=${coordinates[0]}&lat=${coordinates[1]}&zoom=18&addressdetails=1`,
         { headers: { 'Accept-Language': 'fr' } }
       );
-      
-      if (!response.ok) {
-        throw new Error('Erreur lors de la récupération de l\'adresse');
-      }
-      
+      if (!response.ok) throw new Error('Erreur lors de la récupération de l\'adresse');
       const data = await response.json();
-      
       if (data && data.display_name) {
-        // Appeler la fonction de rappel avec les coordonnées et l'adresse formatée
-        onLocationSelect({
-          coordinates: coordinates,
-          formattedAddress: data.display_name
-        });
+        onLocationSelect({ coordinates, formattedAddress: data.display_name });
       }
     } catch (error) {
       console.error('Erreur de géocodage inverse:', error);
@@ -49,146 +40,125 @@ export default function OrderMap({ onLocationSelect, initialCoordinates = [0, 0]
     }
   }, [onLocationSelect, t]);
 
-  // Effet pour charger la carte à l'exécution côté client uniquement
+  // Initialisation de la carte une seule fois
   useEffect(() => {
-    // Fonction asynchrone pour initialiser la carte
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+    let olMap = null;
+    let markerSource = null;
+    let markerLayer = null;
+    let cleanup = null;
     async function initializeMap() {
       try {
-        // Importer dynamiquement OpenLayers uniquement côté client
         const ol = await import('ol');
-        const View = (await import('ol/View')).default;        const TileLayer = (await import('ol/layer/Tile')).default;
+        const View = (await import('ol/View')).default;
+        const TileLayer = (await import('ol/layer/Tile')).default;
         const OSM = (await import('ol/source/OSM')).default;
-        const { fromLonLat, toLonLat } = await import('ol/proj');
         const VectorLayer = (await import('ol/layer/Vector')).default;
         const VectorSource = (await import('ol/source/Vector')).default;
         const Point = (await import('ol/geom/Point')).default;
         const Feature = (await import('ol/Feature')).default;
         const Style = (await import('ol/style/Style')).default;
         const Icon = (await import('ol/style/Icon')).default;
+        const { fromLonLat, toLonLat } = await import('ol/proj');
         const Control = await import('ol/control');
-          // Importation des styles CSS d'OpenLayers
-        await import('ol/ol.css');
-        
-        // Créer la source et la couche principale (OpenStreetMap)
-        const osmSource = new OSM();
-        const osmLayer = new TileLayer({ source: osmSource });
-        
-        // Créer la source et la couche pour le marqueur
-        const markerSource = new VectorSource();
-        const markerLayer = new VectorLayer({
+        // Create marker source and layer BEFORE map
+        markerSource = new VectorSource();
+        markerSourceRef.current = markerSource;
+        markerLayer = new VectorLayer({
           source: markerSource,
           style: new Style({
             image: new Icon({
               anchor: [0.5, 1],
-              src: '/marker-icon.svg', // Assurez-vous d'avoir cette image dans votre dossier public
+              src: '/marker-icon.svg',
               scale: 0.2
             })
           })
         });
-        
-        // Coordonnées initiales (si fournies) ou position par défaut (Paris)
-        const initialCenter = initialCoordinates[0] !== 0 && initialCoordinates[1] !== 0 
-          ? fromLonLat(initialCoordinates) 
-          : fromLonLat([2.3522, 48.8566]);        // Créer la carte
-        const olMap = new ol.Map({
+        // Coordonnées du centre du Maroc
+        const marocCenter = [-7.0926, 31.7917];
+        // BBOX Maroc: [Ouest, Sud, Est, Nord] (lon/lat)
+        const marocExtentLonLat = [-13.17, 21.34, -0.99, 35.92];
+        // Convertir l'extent en projection Web Mercator
+        const marocExtent = [
+          ...fromLonLat([marocExtentLonLat[0], marocExtentLonLat[1]]), // SW
+          ...fromLonLat([marocExtentLonLat[2], marocExtentLonLat[3]])  // NE
+        ];
+        const initialCenter = (initialCoordinates[0] !== 0 && initialCoordinates[1] !== 0)
+          ? fromLonLat(initialCoordinates)
+          : fromLonLat(marocCenter);
+        olMap = new ol.Map({
           target: mapRef.current,
-          layers: [osmLayer, markerLayer],
+          layers: [new TileLayer({ source: new OSM() }), markerLayer],
           view: new View({
             center: initialCenter,
-            zoom: 15
+            zoom: 6, // Zoom adapté au Maroc
+            minZoom: 5,
+            maxZoom: 18,
+            extent: marocExtent
           }),
-          controls: Control.default ? Control.default() : Control.defaults({
-            attributionOptions: {
-              collapsible: false
-            }
-          })
+          controls: Control.default ? Control.default() : Control.defaults({ attributionOptions: { collapsible: false } })
         });
-        
-        // Si des coordonnées initiales sont fournies, ajouter un marqueur
+
+        // Ajout du marqueur initial si coordonnées valides
         if (initialCoordinates[0] !== 0 && initialCoordinates[1] !== 0) {
-          const marker = new Feature({
-            geometry: new Point(initialCenter)
-          });
+          const marker = new Feature({ geometry: new Point(initialCenter) });
           markerSource.addFeature(marker);
         }
-        
-        // Fonction pour géolocaliser l'utilisateur
-        const geolocate = () => {
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-              (position) => {
-                const userCoords = [position.coords.longitude, position.coords.latitude];
-                const mapCoords = fromLonLat(userCoords);
-                
-                // Déplacer la vue de la carte
-                olMap.getView().animate({
-                  center: mapCoords,
-                  zoom: 15,
-                  duration: 1000
-                });
-                
-                // Mettre à jour le marqueur
-                markerSource.clear();
-                const marker = new Feature({
-                  geometry: new Point(mapCoords)
-                });
-                markerSource.addFeature(marker);
-                
-                // Récupérer l'adresse à partir des coordonnées
-                fetchAddressFromCoordinates(userCoords);
-              },
-              (error) => {
-                console.error('Erreur de géolocalisation:', error);
-                setError(t('geolocationError'));
-              }
-            );
-          } else {
-            setError(t('geolocationNotSupported'));
-          }
-        };
-        
-        // Tenter de géolocaliser l'utilisateur au chargement
-        geolocate();
-        
+
         // Gestionnaire d'événements pour les clics sur la carte
         olMap.on('click', (event) => {
           const clickedCoord = olMap.getCoordinateFromPixel(event.pixel);
           const lonLatCoord = toLonLat(clickedCoord);
-          
-          // Mettre à jour le marqueur
           markerSource.clear();
-          const marker = new Feature({
-            geometry: new Point(clickedCoord)
-          });
+          const marker = new Feature({ geometry: new Point(clickedCoord) });
           markerSource.addFeature(marker);
-          
-          // Récupérer l'adresse à partir des coordonnées
           fetchAddressFromCoordinates(lonLatCoord);
         });
-        
-        // Stocker la référence à la carte
+
         setMap(olMap);
-        setMapLoaded(true);
         setLoading(false);
+        cleanup = () => {
+          olMap.setTarget(null);
+        };
       } catch (error) {
         console.error('Erreur lors de l\'initialisation de la carte:', error);
         setError(t('mapLoadError'));
         setLoading(false);
       }
     }
-    
-    // Initialiser la carte si l'élément ref existe
-    if (mapRef.current && !mapLoaded) {
+    if (mapRef.current && !map) {
       initializeMap();
     }
-    
-    // Nettoyer la carte lors du démontage du composant
     return () => {
-      if (map) {
-        map.setTarget(null);
-      }
+      if (cleanup) cleanup();
     };
-  }, [mapRef, mapLoaded, initialCoordinates, t, fetchAddressFromCoordinates, map]);
+  }, [t, fetchAddressFromCoordinates]);
+
+  // Synchroniser la position du marqueur et la vue si initialCoordinates change
+  useEffect(() => {
+    if (
+      map &&
+      Array.isArray(initialCoordinates) &&
+      initialCoordinates.length === 2 &&
+      typeof initialCoordinates[0] === 'number' &&
+      typeof initialCoordinates[1] === 'number' &&
+      (initialCoordinates[0] !== 0 || initialCoordinates[1] !== 0)
+    ) {
+      import('ol/proj').then(({ fromLonLat }) => {
+        import('ol/geom/Point').then(({ default: Point }) => {
+          import('ol/Feature').then(({ default: Feature }) => {
+            const markerSource = markerSourceRef.current;
+            if (!markerSource) return;
+            markerSource.clear();
+            const marker = new Feature({ geometry: new Point(fromLonLat(initialCoordinates)) });
+            markerSource.addFeature(marker);
+            map.getView().animate({ center: fromLonLat(initialCoordinates), zoom: 15, duration: 800 });
+          });
+        });
+      });
+    }
+  }, [initialCoordinates, map]);
   
   return (
     <Box sx={{ position: 'relative', height: MAP_PLACEHOLDER_HEIGHT, border: `1px solid ${theme.palette.divider}`, borderRadius: theme.shape.borderRadius }}>
@@ -217,6 +187,7 @@ export default function OrderMap({ onLocationSelect, initialCoordinates = [0, 0]
       
       <Box 
         ref={mapRef} 
+        id="order-map-container"
         sx={{ 
           width: '100%', 
           height: '100%',
