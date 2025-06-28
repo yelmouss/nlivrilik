@@ -139,6 +139,17 @@ export default function SignIn() {
                 },
               }}
             />
+            <Box sx={{ textAlign: "right", width: "100%", mt: -1 }}>
+              <Link href="/auth/forgot-password" style={{ textDecoration: "none" }}>
+                <Typography
+                  component="span"
+                  color="primary"
+                  sx={{ textDecoration: "underline", cursor: "pointer", fontSize: 14 }}
+                >
+                  Mot de passe oublié ?
+                </Typography>
+              </Link>
+            </Box>
             <TextField
               margin="normal"
               required

@@ -8,6 +8,15 @@ export { UserRoles };
  * Base user schema with common fields for all user types
  */
 const BaseUserSchema = {
+  // Pour la réinitialisation du mot de passe
+  resetPasswordToken: {
+    type: String,
+    default: undefined,
+  },
+  resetPasswordExpires: {
+    type: Date,
+    default: undefined,
+  },
   name: {
     type: String,
     required: [true, 'Name is required']

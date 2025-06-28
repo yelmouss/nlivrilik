@@ -181,5 +181,26 @@
     "orderDetailsDescription": "Please describe what you need delivered in detail",
     "orderConfirmationDescription": "Please review your order before submitting",
     "orderHistory": "Order History"
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "Discover all our services to meet your daily, professional or personal needs. Our team is committed to providing fast, reliable, and personalized service.",
+    "mainService1Title": "Express Delivery",
+    "mainService1Description": "Receive your parcels in record time, thanks to our network of responsive and professional couriers.",
+    "mainService2Title": "Real-Time Tracking",
+    "mainService2Description": "Track your delivery at every stage, from pickup to handover.",
+    "mainService3Title": "24/7 Customer Support",
+    "mainService3Description": "Our team is always available to answer your questions and resolve your issues.",
+    "extraServicesTitle": "Additional Services",
+    "extraServicesSubtitle": "We also offer services tailored to specific needs: grocery delivery, meal delivery, urgent document delivery, and much more. Trust our expertise to simplify your daily life!",
+    "extraService1Title": "Grocery Delivery",
+    "extraService1Description": "Have your groceries delivered to your home quickly and safely, with the option to choose your preferred time slots.",
+    "extraService2Title": "Meal Delivery",
+    "extraService2Description": "Order your favorite dishes from your favorite restaurants and receive them hot, wherever you are.",
+    "extraService3Title": "Urgent Document Delivery",
+    "extraService3Description": "Send your important documents confidentially and benefit from express delivery.",
+    "whyTitle": "Why choose Nlivri Lik?",
+    "whyList": "• Speed and punctuality: we guarantee short and respected delivery times.<br />• Security: your parcels and documents are handled with the utmost care.<br />• Flexibility: we adapt to your schedules and specific needs.<br />• Attentive customer service: a team available to support you at every step.",
+    "contactCta": "Contact us for a personalized quote or any special request. Nlivri Lik is the tailor-made delivery solution for everyone!"
   }
 }

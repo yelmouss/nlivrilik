@@ -1,9 +1,11 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ThemeRegistry from './ThemeRegistry';
+import { Providers } from './providers';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
-import { Providers } from "./providers"; // Assuming providers.js is for other global providers
+
+import ClientOnlyWhatsapp from "../components/ClientOnlyWhatsapp";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -152,6 +154,7 @@ export default async function RootLayout({ children, params }) {
           <ThemeRegistry>
             <Providers>{/* This now wraps Navbar and Footer as well */}
               {children}
+              <ClientOnlyWhatsapp />
             </Providers>
           </ThemeRegistry>
         </NextIntlClientProvider>

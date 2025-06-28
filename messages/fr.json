@@ -102,8 +102,10 @@
 
     "placeOrder": "Passer une Commande",
     "placeYourFirstOrder": "Passez votre première commande"
-  },  "Order": {
-     "orderDetails": "Détails",
+  },
+  "Order": {
+    "searchAddressPlaceholder": "Rechercher une adresse",
+    "orderDetails": "Détails",
     "showDetails": "Afficher les Détails",
     "createOrder": "Créer une Commande",
     "placeOrder": "Passer une Commande",
@@ -152,7 +154,8 @@
     "orderBeingProcessed": "Votre commande est en cours de traitement",
     "orderCompleted": "Votre commande a été livrée",
     "orderCancelled": "Votre commande a été annulée",
-    "orderNumber": "Numéro de Commande",    "confirmCancelTitle": "Annuler la Commande",
+    "orderNumber": "Numéro de Commande",
+    "confirmCancelTitle": "Annuler la Commande",
     "confirmCancelMessage": "Êtes-vous sûr de vouloir annuler cette commande ?",
     "confirmCancel": "Confirmer l'Annulation",
     "confirmCancellation": "Confirmer l'Annulation",
@@ -180,5 +183,26 @@
     "orderHistory": "Historique des Commandes",
     "suggestions": "Suggestions",
     "additionalInfo": "Informations supplémentaires"
+  },
+  "services": {
+    "title": "Nos Services",
+    "subtitle": "Découvrez l'ensemble de nos prestations pour répondre à tous vos besoins du quotidien, professionnels ou personnels. Notre équipe s'engage à offrir un service rapide, fiable et personnalisé.",
+    "mainService1Title": "Livraison Express",
+    "mainService1Description": "Recevez vos colis en un temps record, grâce à notre réseau de livreurs réactifs et professionnels.",
+    "mainService2Title": "Suivi en Temps Réel",
+    "mainService2Description": "Suivez votre livraison à chaque étape, de la prise en charge à la remise en main propre.",
+    "mainService3Title": "Support Client 24/7",
+    "mainService3Description": "Notre équipe est toujours disponible pour répondre à vos questions et résoudre vos problèmes.",
+    "extraServicesTitle": "Services complémentaires",
+    "extraServicesSubtitle": "Nous proposons également des services adaptés à des besoins spécifiques : livraison de courses, de repas, de documents urgents, et bien plus encore. Faites confiance à notre expertise pour simplifier votre quotidien !",
+    "extraService1Title": "Livraison de Courses",
+    "extraService1Description": "Faites-vous livrer vos courses à domicile rapidement et en toute sécurité, avec la possibilité de choisir vos créneaux horaires préférés.",
+    "extraService2Title": "Livraison de Repas",
+    "extraService2Description": "Commandez vos plats préférés auprès de vos restaurants favoris et recevez-les chauds, où que vous soyez.",
+    "extraService3Title": "Livraison de Documents Urgents",
+    "extraService3Description": "Transmettez vos documents importants en toute confidentialité et bénéficiez d'une livraison express.",
+    "whyTitle": "Pourquoi choisir Nlivri Lik ?",
+    "whyList": "• Rapidité et ponctualité : nous garantissons des délais de livraison courts et respectés.<br />• Sécurité : vos colis et documents sont traités avec le plus grand soin.<br />• Flexibilité : nous nous adaptons à vos contraintes horaires et à vos besoins spécifiques.<br />• Service client à l'écoute : une équipe disponible pour vous accompagner à chaque étape.",
+    "contactCta": "Contactez-nous pour un devis personnalisé ou pour toute demande particulière. Nlivri Lik, c'est la solution de livraison sur-mesure pour tous !"
   }
 }

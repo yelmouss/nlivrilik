@@ -133,7 +133,7 @@ export default function OrderMap({ onLocationSelect, initialCoordinates = [0, 0]
     return () => {
       if (cleanup) cleanup();
     };
-  }, [t, fetchAddressFromCoordinates]);
+  }, [t, fetchAddressFromCoordinates, initialCoordinates, map]);
 
   // Synchroniser la position du marqueur et la vue si initialCoordinates change
   useEffect(() => {

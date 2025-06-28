@@ -145,7 +145,7 @@ export default function Navbar() {
 
   return (
     <>
-      <AppBar component="nav" position="sticky" sx={{ top: 0, zIndex: (theme) => theme.zIndex.appBar }}>
+      <AppBar component="nav" position="fixed" sx={{ top: 0, left: 0, width: '100vw', zIndex: (theme) => theme.zIndex.appBar }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Link href="/" passHref style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
@@ -204,12 +204,12 @@ export default function Navbar() {
                     sx: { minWidth: 180 }
                   }}
                 >
-                  <MenuItem onClick={handleUserMenuClose} component={Link} href="/profile">
+                  {/* <MenuItem onClick={handleUserMenuClose} component={Link} href="/profile">
                     <ListItemIcon>
                       <AccountCircleIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText primary={t('Profile')} />
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem onClick={handleUserMenuClose} component={Link} href="/my-orders">
                     <ListItemIcon>
                       <ShoppingBagIcon fontSize="small" />
@@ -265,7 +265,8 @@ export default function Navbar() {
           </IconButton>
         </Toolbar>
       </AppBar>
-
+      {/* Ajout d'un padding-top pour compenser la hauteur de la navbar (64px desktop, 56px mobile) */}
+      <Box sx={{ height: { xs: 56, sm: 64 }, minHeight: { xs: 56, sm: 64 } }} />
       <Drawer
         anchor="right"
         open={mobileOpen}
