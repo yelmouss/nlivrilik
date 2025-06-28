@@ -278,7 +278,7 @@ export function generateEmailTemplate({
     <body>
       <div class="container">
         <div class="header">
-          <img src="https://nlivrilik.vercel.app/logo.png" alt="NLIVRILIK Logo" class="logo">
+          <img src="https://nlivrilik.ma/logo.png" alt="NLIVRILIK Logo" class="logo">
           <h1>${title}</h1>
         </div>
         <div class="content">

@@ -19,14 +19,14 @@ const geistMono = Geist_Mono({
 
 // metadata remains here as this is a Server Component
 export const metadata = {
-  metadataBase: new URL('https://nlivrilik.vercel.app'),
+  metadataBase: new URL('https://nlivrilik.ma'),
   title: {
     default: 'NLIVRILIK - Votre Service de Livraison Rapide et Fiable au Maroc',
     template: '%s | NLIVRILIK',
   },
   description: "NLIVRILIK est votre partenaire de confiance pour la livraison rapide et efficace de colis, repas, courses, et médicaments au Maroc. Service disponible dans les grandes villes.",
   keywords: ['livraison Maroc', 'NLIVRILIK', 'service de livraison', 'livraison rapide', 'livraison repas', 'livraison courses', 'livraison médicaments', 'Maroc', 'Casablanca', 'Rabat', 'Marrakech', 'Tanger', 'Agadir', 'Fès', 'Meknès', 'Oujda'],
-  authors: [{ name: 'NLIVRILIK Team', url: 'https://nlivrilik.vercel.app' }],
+  authors: [{ name: 'NLIVRILIK Team', url: 'https://nlivrilik.ma' }],
   creator: 'NLIVRILIK Team',
   publisher: 'NLIVRILIK',
   alternates: {
@@ -40,7 +40,7 @@ export const metadata = {
   openGraph: {
     title: 'NLIVRILIK - Livraison Express au Maroc',
     description: 'Découvrez NLIVRILIK, le service de livraison tout-en-un pour vos colis, repas, courses et médicaments à travers le Maroc.',
-    url: 'https://nlivrilik.vercel.app',
+    url: 'https://nlivrilik.ma',
     siteName: 'NLIVRILIK',
     images: [
       {
@@ -109,7 +109,7 @@ export const metadata = {
   //   appId: 'myAppStoreID',
   //   appArgument: 'myAppArgument',
   // },
-  // assets: ['https://nlivrilik.vercel.app/assets'], // If you have a dedicated assets domain
+  // assets: ['https://nlivrilik.ma/assets'], // If you have a dedicated assets domain
   // category: 'business', // Or a more specific category
 };
 
@@ -121,8 +121,8 @@ export default async function RootLayout({ children, params }) {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'NLIVRILIK',
-    url: 'https://nlivrilik.vercel.app',
-    logo: 'https://nlivrilik.vercel.app/logo.png',
+    url: 'https://nlivrilik.ma',
+    logo: 'https://nlivrilik.ma/logo.png',
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+212-612-865681', // Ajoutez votre numéro de téléphone
