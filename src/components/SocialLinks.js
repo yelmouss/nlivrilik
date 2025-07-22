@@ -5,34 +5,28 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import FacebookIcon from "@mui/icons-material/Facebook";
-import TwitterIcon from "@mui/icons-material/Twitter";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import { FaTiktok } from "react-icons/fa";
 
 const socialLinks = [
 	{
-		href: "https://facebook.com",
+		href: "https://www.facebook.com/profile.php?id=61575807004445",
 		icon: <FacebookIcon />,
 		color: "#1877F2",
 		label: "Facebook",
 	},
 	{
-		href: "https://twitter.com",
-		icon: <TwitterIcon />,
-		color: "#1DA1F2",
-		label: "Twitter",
-	},
-	{
-		href: "https://instagram.com",
+		href: "https://www.instagram.com/nlivrilik1/",
 		icon: <InstagramIcon />,
 		color: "#E4405F",
 		label: "Instagram",
 	},
+	//tiktok
 	{
-		href: "https://linkedin.com",
-		icon: <LinkedInIcon />,
-		color: "#0A66C2",
-		label: "LinkedIn",
+		href: "https://www.tiktok.com/@nlivrilik",
+		icon: <FaTiktok />,
+		color: "#E4405F",
+		label: "Tiktok",
 	},
 ];
 

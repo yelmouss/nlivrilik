@@ -3,11 +3,21 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./src/request.js');
 
-// Configuration pour next-intl avec l'App Router.
-// Le fichier './src/request.js' gère la configuration des locales et des messages.
+const isMaintenanceMode = process.env.MAINTENANCE_MODE === 'false'; // Activé pour la maintenance
+
 const nextConfig = {
   output: 'standalone',
-  // Toute autre configuration Next.js va ici
+  async redirects() {
+    if (!isMaintenanceMode) return [];
+    
+    return [
+      {
+        source: '/((?!maintenance|_next|api).*)',
+        destination: '/maintenance',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);

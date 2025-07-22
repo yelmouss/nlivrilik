@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import Box from "@mui/material/Box";
 
-const whatsappNumber = "00212610336499";
+const whatsappNumber = "212752904926";
 const whatsappUrl = `https://wa.me/${whatsappNumber}`;
 
 export default function WhatsappButton() {
