@@ -72,7 +72,7 @@ export default function MaintenancePage() {
           {/* Informations de contact */}
           <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-6 mb-6">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              🆘 Besoin d'aide urgente ? Contactez yelmouss devt
+              🆘 Besoin d&apos;aide urgente ? Contactez yelmouss devt
             </h3>
             <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
               <motion.a
