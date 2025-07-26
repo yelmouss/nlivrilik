@@ -81,7 +81,7 @@ export default function Footer() {
         py: 6, // Increased padding
         px: 2,
         mt: "auto",
-        backgroundColor: theme.palette.primary.main, // Use hero section background
+        backgroundColor: theme.palette.primary.contrastText, // Use hero section background
         borderTop: `1px solid ${theme.palette.secondary.main}`, // Adjusted border color
       }}
     >

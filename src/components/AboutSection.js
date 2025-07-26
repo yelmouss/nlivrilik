@@ -17,16 +17,12 @@ const AboutSection = ({ t }) => (
       {t("aboutTitle")}
     </Typography>
     <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
-      <Image
-        src="/logo.png"
-        alt={'NLivri Lik Logo'}
-        width={300}
-        height={300}
-      />
+      <Image src="/logo.png" alt={"NLivri Lik Logo"} width={300} height={300} />
     </Box>
     <Typography
-      variant="body1"
-      color="text.secondary"
+      variant="h6"
+      component="p"
+      color="text.secondary.light"
       sx={{ maxWidth: "700px", margin: "0 auto" }}
     >
       {t("aboutDescription")}

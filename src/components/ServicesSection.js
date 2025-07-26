@@ -18,10 +18,10 @@ const ServicesSection = ({ t }) => (
       gutterBottom
       sx={{ textShadow: "2px 2px 4px rgba(0,0,0,0.5)" }}
     >
-      {t("servicesOfferedTitle")}
+      {t("servicesOfferedTitle")} 
     </Typography>
 
-    <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 4 }}>
+    <Typography variant="subtitle1" color="text.secondary.contrastText" sx={{ mb: 4 }}>
       {t("servicesOfferedSubtitle")}
     </Typography>
     <Grid container spacing={4} sx={{ mt: 4, mb: 6 }}>

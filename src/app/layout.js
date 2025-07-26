@@ -6,6 +6,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
 
 import ClientOnlyWhatsapp from "../components/ClientOnlyWhatsapp";
+import InfoDrawer from "../components/InfoDrawer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -155,6 +156,7 @@ export default async function RootLayout({ children, params }) {
             <Providers>{/* This now wraps Navbar and Footer as well */}
               {children}
               <ClientOnlyWhatsapp />
+              <InfoDrawer />
             </Providers>
           </ThemeRegistry>
         </NextIntlClientProvider>

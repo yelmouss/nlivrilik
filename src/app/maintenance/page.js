@@ -113,11 +113,11 @@ export default function MaintenancePage() {
           </div>
 
           {/* Message spécial pour les urgences */}
-          <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          {/* <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-red-700 font-medium text-sm">
               🚨 <strong>Pour les urgences de livraison :</strong> Contactez directement yelmouss devt via WhatsApp ou email
             </p>
-          </div>
+          </div> */}
         </motion.div>
 
      

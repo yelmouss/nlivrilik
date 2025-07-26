@@ -34,74 +34,85 @@ const extraServicesKeys = [
 export default function ServicesPage() {
   const t = useTranslations("services");
   return (
-    <Container sx={{ textAlign: "center", mb: 6, minHeight: "100vh", py: 4 }}>
-      <Typography
-        variant="h2"
-        component="h1"
-        fontWeight="bold"
-        fontSize={{ xs: "2.5rem", sm: "3rem", md: "5rem" }}
-        gutterBottom
-        sx={{ textShadow: "2px 2px 4px rgba(0,0,0,0.5)" }}
-      >
-        {t("title")}
-      </Typography>
-      <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 4 }}>
-        {t("subtitle")}
-      </Typography>
-      <Grid container spacing={4} sx={{ mt: 4, mb: 6 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <ServiceCard
-            title={t("mainService1Title")}
-            description={t("mainService1Description")}
-            animationData={animationData1}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <ServiceCard
-            title={t("mainService2Title")}
-            description={t("mainService2Description")}
-            animationData={animationData2}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <ServiceCard
-            title={t("mainService3Title")}
-            description={t("mainService3Description")}
-            animationData={animationData3}
-          />
-        </Grid>
-      </Grid>
-      <Typography variant="h4" component="h2" fontWeight="bold" sx={{ mb: 3, mt: 6 }}>
-        {t("extraServicesTitle")}
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 700, mx: "auto" }}>
-        {t("extraServicesSubtitle")}
-      </Typography>
-      <Grid container spacing={4} sx={{ mb: 8 }}>
-        {extraServicesKeys.map((service, idx) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={idx}>
+    <Box sx={{ textAlign: "center",  minHeight: "100vh", bgcolor: "primary.contrastText" }}>
+      <Container sx={{ textAlign: "center",   py: 4 }}>
+        <Typography
+          variant="h2"
+          component="h1"
+          fontWeight="bold"
+          fontSize={{ xs: "2.5rem", sm: "3rem", md: "5rem" }}
+          gutterBottom
+          sx={{ textShadow: "2px 2px 4px rgba(0,0,0,0.5)" }}
+        >
+          {t("title")}
+        </Typography>
+        <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 4 }}>
+          {t("subtitle")}
+        </Typography>
+        <Grid container spacing={4} sx={{ mt: 4, mb: 6 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <ServiceCard
-              title={t(service.title)}
-              description={t(service.description)}
-              animationData={service.animationData}
+              title={t("mainService1Title")}
+              description={t("mainService1Description")}
+              animationData={animationData1}
             />
           </Grid>
-        ))}
-      </Grid>
-      <Box sx={{ maxWidth: 800, mx: "auto", mt: 6 }}>
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          {t("whyTitle")}
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <ServiceCard
+              title={t("mainService2Title")}
+              description={t("mainService2Description")}
+              animationData={animationData2}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <ServiceCard
+              title={t("mainService3Title")}
+              description={t("mainService3Description")}
+              animationData={animationData3}
+            />
+          </Grid>
+        </Grid>
+        <Typography
+          variant="h4"
+          component="h2"
+          fontWeight="bold"
+          sx={{ mb: 3, mt: 6 }}
+        >
+          {t("extraServicesTitle")}
         </Typography>
         <Typography
           variant="body1"
           color="text.secondary"
-          paragraph
-          dangerouslySetInnerHTML={{ __html: t("whyList") }}
-        />
-        <Typography variant="body1" color="text.secondary">
-          {t("contactCta")}
+          sx={{ mb: 4, maxWidth: 700, mx: "auto" }}
+        >
+          {t("extraServicesSubtitle")}
         </Typography>
-      </Box>
-    </Container>
+        <Grid container spacing={4} sx={{ mb: 8 }}>
+          {extraServicesKeys.map((service, idx) => (
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={idx}>
+              <ServiceCard
+                title={t(service.title)}
+                description={t(service.description)}
+                animationData={service.animationData}
+              />
+            </Grid>
+          ))}
+        </Grid>
+        <Box sx={{ maxWidth: 800, mx: "auto", mt: 6 }}>
+          <Typography variant="h5" fontWeight="bold" gutterBottom>
+            {t("whyTitle")}
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            paragraph
+            dangerouslySetInnerHTML={{ __html: t("whyList") }}
+          />
+          <Typography variant="body1" color="text.secondary">
+            {t("contactCta")}
+          </Typography>
+        </Box>
+      </Container>
+    </Box>
   );
 }

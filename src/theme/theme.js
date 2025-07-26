@@ -12,24 +12,44 @@ const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#129990', // Vert sarcelle moyen
+      main: '#EA9932',      // Couleur principale
+      light: '#FFC884',     // Variante claire
+      dark: '#C77712',      // Variante foncée
+      contrastText: '#FFFBDE',
     },
     secondary: {
-      main: '#90D1CA', // Vert sarcelle clair
+      main: '#FFDF84',      // Couleur secondaire principale
+      light: '#FDD35A',     // Variante claire
+      dark: '#C79812',      // Variante foncée
+      contrastText: '#9E2A02',
     },
     background: {
-      default: '#FFFBDE', // Jaune très clair
-      paper: '#FFFBDE', 
+      default: '#FFDF84',   // Jaune très clair
+      paper: '#FFC884',     // Papier avec la couleur claire primaire
     },
     text: {
-      primary: '#096B68', // Vert sarcelle foncé
-      secondary: '#129990', // Vert sarcelle moyen
+      primary: '#9E5902',   // Texte principal foncé
+      secondary: '#FFA384', // Texte secondaire orangé
     },
     custom: {
-      darkTeal: '#096B68',
-      mediumTeal: '#129990',
-      lightTeal: '#90D1CA',
-      lightYellow: '#FFFBDE',
+      // Gamme Primary
+      main: '#EA9932',
+      light: '#FFC884',
+      medium: '#FDB55A',
+      dark: '#C77712',
+      darkest: '#9E5902',
+      // Gamme Secondary
+      secMain: '#FFDF84',
+      secLight: '#FDD35A',
+      secMedium: '#EABA32',
+      secDark: '#C79812',
+      secDarkest: '#9E7502',
+      // Accent
+      accent: '#FFA384',
+      accentMedium: '#FD845A',
+      accentDark: '#EA6132',
+      accentDarker: '#C74012',
+      accentDarkest: '#9E2A02',
     }
   },
   typography: {
@@ -37,16 +57,16 @@ const theme = createTheme({
     h1: {
       fontSize: '2.5rem',
       fontWeight: 700,
-      color: '#096B68', // Texte principal avec la couleur la plus foncée
+      color: '#9E5902', // Texte principal avec la couleur la plus foncée
     },
     h2: {
       fontSize: '2rem',
       fontWeight: 700,
-      color: '#096B68',
+      color: '#EA9932',
     },
     body1: {
       fontSize: '1rem',
-      color: '#129990', // Texte du corps avec une couleur sarcelle moyenne
+      color: '#C77712', // Texte du corps avec une couleur medium foncée
     },
     button: {
       textTransform: 'none',
@@ -56,49 +76,45 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: ({ theme }) => ({
-          backgroundColor: theme.palette.secondary.main, // AppBar avec le vert sarcelle clair
-          color: theme.palette.custom.darkTeal, // Texte foncé pour contraster avec le fond clair
+          backgroundColor: theme.palette.secondary.main,
+          color: theme.palette.custom.accentDarkest,
         }),
       },
     },
     MuiButton: {
       styleOverrides: {
         containedPrimary: {
-          backgroundColor: '#129990',
+          backgroundColor: '#EA9932',
           color: '#FFFBDE',
           '&:hover': {
-            backgroundColor: '#096B68',
+            backgroundColor: '#C77712',
           },
         },
         containedSecondary: {
-          backgroundColor: '#90D1CA',
-          color: '#096B68',
+          backgroundColor: '#FFDF84',
+          color: '#9E5902',
           '&:hover': {
-            backgroundColor: '#7ABFB8', // Nuance plus claire de #90D1CA pour le survol
+            backgroundColor: '#FDD35A',
           },
         },
-        // Style pour les boutons de navigation texte dans l'AppBar
         text: {
-          color: '#FFFBDE', // Couleur du texte des boutons dans l'AppBar
+          color: '#9E2A02',
           '&:hover': {
-            backgroundColor: 'rgba(255, 251, 222, 0.08)', // Léger surlignage jaune clair
+            backgroundColor: 'rgba(255, 251, 222, 0.08)',
           }
         }
       },
     },
-    // Assurer que les IconButton dans l'AppBar utilisent aussi la bonne couleur
     MuiIconButton: {
       styleOverrides: {
-        root: ({ theme, ownerState }) => ({
-          // Appliquer la couleur uniquement si l'IconButton est un descendant direct ou indirect d'AppBar
-          // ou si une couleur spécifique n'est pas déjà définie par `color` prop
-          ...(ownerState.color === undefined || ownerState.color === 'inherit' ? {
-            color: theme.palette.custom.darkTeal, // Texte foncé pour contraster
+        root: ({ theme, ownerState }) => (
+          (ownerState.color === undefined || ownerState.color === 'inherit') ? {
+            color: theme.palette.custom.accentDarkest,
             '&:hover': {
-              backgroundColor: 'rgba(9, 107, 104, 0.08)', // Léger surlignage sarcelle foncé
+              backgroundColor: 'rgba(234, 153, 50, 0.08)',
             }
-          } : {})
-        }),
+          } : {}
+        ),
       },
     },
   },
