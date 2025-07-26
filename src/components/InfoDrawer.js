@@ -33,7 +33,7 @@ export default function InfoDrawer() {
         }}
         onClick={toggleDrawer(true)}
       >
-        Voir plus d'informations
+        Voir plus d&apos;informations
       </Button>
       <Drawer
         anchor="right"
